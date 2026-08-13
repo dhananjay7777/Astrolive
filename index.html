@@ -820,16 +820,16 @@
           </div>
           <div class="tools-grid">
             <div class="tool-card">
-              <img src="astrolive-assets/banners/love-calculator-banner.png" alt="Love Calculator">
+              <img src="asset/banners/love-calculator-banner.png" alt="Love Calculator">
             </div>
             <div class="tool-card">
-              <img src="astrolive-assets/banners/daily-horoscope-banner.png" alt="Daily Horoscope">
+              <img src="asset/banners/daily-horoscope-banner.png" alt="Daily Horoscope">
             </div>
             <div class="tool-card">
-              <img src="astrolive-assets/banners/todays-panchanga-banner.png" alt="Today's Panchanga">
+              <img src="asset/banners/todays-panchanga-banner.png" alt="Today's Panchanga">
             </div>
             <div class="tool-card">
-              <img src="astrolive-assets/banners/kundli-match-banner.png" alt="Kundli's Match">
+              <img src="asset/banners/kundli-match-banner.png" alt="Kundli's Match">
             </div>
           </div>
 
@@ -933,7 +933,7 @@
           </div>
         </div>
         <div class="pdp-gallery" id="pdpGallery">
-          <img class="product-thumb-img" id="pdpImage" src="" alt="" onerror="this.onerror=null;this.src='../assets/astrolive/products/placeholder-fallback.svg';">
+          <img class="product-thumb-img" id="pdpImage" src="" alt="" onerror="this.onerror=null;this.src='asset/product/placeholder-fallback.svg';">
           <span class="pdp-badge-lg" id="pdpBadgeLg" style="display:none;"></span>
         </div>
         <div class="pdp-dots">
@@ -1346,12 +1346,12 @@
   /* Intention banners — shown below the section title when Categories → an
      intention is selected. Same centralized-mapping pattern as PRODUCT_ASSETS. */
   const BANNER_ASSETS = {
-    career: 'astrolive-assets/banners/career-success-banner.png',
-    love: 'astrolive-assets/banners/love-relationships-banner.png',
-    wealth: 'astrolive-assets/banners/wealth-prosperity-banner.png',
-    peace: 'astrolive-assets/banners/peace-wellness-banner.png',
-    protection: 'astrolive-assets/banners/protection-removal-banner.png',
-    planetary: 'astrolive-assets/banners/planetary-remedies-banner.png'
+    career: 'asset/banners/career-success-banner.png',
+    love: 'asset/banners/love-relationships-banner.png',
+    wealth: 'asset/banners/wealth-prosperity-banner.png',
+    peace: 'asset/banners/peace-wellness-banner.png',
+    protection: 'asset/banners/protection-removal-banner.png',
+    planetary: 'asset/banners/planetary-remedies-banner.png'
   };
 
   const INTENTIONS = [
@@ -1373,16 +1373,16 @@
      so a future asset swap only needs to change this block.
   ========================================================= */
   const PRODUCT_ASSETS = {
-    rudraksh: 'astrolive-assets/product/rudraksh-mala.png',
-    yantra: 'astrolive-assets/product/career-yantra.png',
-    tigereye: 'astrolive-assets/product/tiger-eye-bracelet.png',
-    ring: 'astrolive-assets/product/blue-sapphire-ring.png',
-    amethyst: 'astrolive-assets/product/amethyst-bracelet.png',
-    citrine: 'astrolive-assets/product/citrine-bracelet.png',
-    mala: 'astrolive-assets/product/rose-quartz-mala.png',
-    pendant: 'astrolive-assets/product/evil-eye-pendant.png'
+    rudraksh: 'asset/product/rudraksh-mala.png',
+    yantra: 'asset/product/career-yantra.png',
+    tigereye: 'asset/product/tiger-eye-bracelet.png',
+    ring: 'asset/product/blue-sapphire-ring.png',
+    amethyst: 'asset/product/amethyst-bracelet.png',
+    citrine: 'asset/product/citrine-bracelet.png',
+    mala: 'asset/product/rose-quartz-mala.png',
+    pendant: 'asset/product/evil-eye-pendant.png'
   };
-  const PRODUCT_IMAGE_FALLBACK = '../assets/astrolive/products/placeholder-fallback.svg';
+  const PRODUCT_IMAGE_FALLBACK = 'asset/product/placeholder-fallback.svg';
 
   function productImageSrc(id){ return PRODUCT_ASSETS[id] || PRODUCT_IMAGE_FALLBACK; }
 
