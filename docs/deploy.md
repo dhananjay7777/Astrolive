@@ -4,9 +4,9 @@ This project is a **static site** (HTML, CSS, JS, images). No build step or serv
 
 **Live URL after deploy:**
 
-`https://pjbhakii.github.io/Astrolive-Proto/`
+`https://dhananjay7777.github.io/Astrolive/`
 
-*(Replace `pjbhakii` / `Astrolive-Proto` if you fork or rename the repo.)*
+*(Replace `dhananjay7777` / `Astrolive` if you fork or rename the repo.)*
 
 ---
 
@@ -62,7 +62,7 @@ git push -u origin main
 ## Step 3 — Turn on GitHub Pages
 
 1. Open the repo on GitHub:  
-   `https://github.com/pjbhakii/Astrolive-Proto`
+   `https://github.com/dhananjay7777/Astrolive`
 2. Go to **Settings** → **Pages** (left sidebar).
 3. Under **Build and deployment** → **Source**, choose **Deploy from a branch**.
 4. Set:
@@ -81,7 +81,7 @@ When deployment finishes, GitHub shows the public URL on the same **Pages** sett
 Default project-site URL:
 
 ```
-https://pjbhakii.github.io/Astrolive-Proto/
+https://dhananjay7777.github.io/Astrolive/
 ```
 
 Open it on a phone or desktop browser. The app should load with Home, Store, Consultant flow, and My Readings.
@@ -145,7 +145,7 @@ GitHub Pages redeploys automatically from `main`. Refresh the live URL after a m
 ## Optional — Custom domain
 
 1. **Settings → Pages → Custom domain** → enter your domain (e.g. `astrolive-demo.example.com`).
-2. Add the DNS records GitHub shows (usually `CNAME` to `pjbhakii.github.io`).
+2. Add the DNS records GitHub shows (usually `CNAME` to `dhananjay7777.github.io`).
 3. Enable **Enforce HTTPS** when available.
 
 ---
