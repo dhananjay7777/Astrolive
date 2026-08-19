@@ -2,728 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AstroLive - Personalized Commerce Prototype</title>
+<title>AstroLive</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  :root{
-    --purple-dark:#4a1a8c;
-    --purple:#7a1fd6;
-    --purple-light:#9b3ff0;
-    --purple-deep:#2e1152;
-    --bg:#f4f1fb;
-    --text:#241a3b;
-    --text-soft:#5a4a7a;
-    --text-mute:#8a8a99;
-    --green:#2fae4e;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:radial-gradient(circle at 50% 20%, #2a2a3d 0%, #14141f 70%);
-    font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    padding:40px 20px;
-  }
+<link rel="stylesheet" href="css/app.css">
 
-  /* ---------- iPhone mockup frame ---------- */
-  .iphone{
-    position:relative;
-    width:393px;
-    height:852px;
-    background:#0b0b0d;
-    border-radius:58px;
-    padding:12px;
-    box-shadow:
-      0 0 0 2px #3a3a3f,
-      0 40px 80px rgba(0,0,0,0.55),
-      inset 0 0 2px rgba(255,255,255,0.15);
-  }
-  .iphone::before{
-    content:"";
-    position:absolute;
-    left:-3px; top:130px;
-    width:3px; height:28px;
-    background:#232326;
-    border-radius:2px 0 0 2px;
-  }
-  .iphone::after{
-    content:"";
-    position:absolute;
-    right:-3px; top:200px;
-    width:3px; height:70px;
-    background:#232326;
-    border-radius:0 2px 2px 0;
-  }
-  .screen{
-    position:relative;
-    width:100%;
-    height:100%;
-    background:var(--bg);
-    border-radius:46px;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-  }
-  .dynamic-island{
-    position:absolute;
-    top:12px;
-    left:50%;
-    transform:translateX(-50%);
-    width:120px;
-    height:34px;
-    background:#000;
-    border-radius:20px;
-    z-index:60;
-  }
-
-  /* ---------- status bar ---------- */
-  .status-bar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:16px 26px 8px;
-    background:var(--purple);
-    color:#fff;
-    font-size:15px;
-    font-weight:600;
-  }
-  .status-left{display:flex;align-items:center;gap:6px;}
-  .status-right{display:flex;align-items:center;gap:5px;}
-  .battery{
-    width:24px;height:12px;border:1.5px solid #fff;border-radius:3px;position:relative;display:inline-block;
-  }
-  .battery::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:6px;background:#fff;border-radius:0 2px 2px 0;}
-  .battery-fill{position:absolute;top:1px;left:1px;bottom:1px;width:70%;background:#fff;border-radius:1.5px;}
-
-  /* ---------- app header ---------- */
-  .app-header{
-    background:var(--purple);
-    padding:6px 20px 22px;
-    display:flex;
-    flex-direction:column;
-  }
-  .header-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
-  .logo{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    color:#fff;
-    font-size:22px;
-    font-weight:800;
-    letter-spacing:0.5px;
-  }
-  .logo .live{color:#ff4d4d;}
-  .logo-icon{
-    width:34px;height:34px;border-radius:50%;
-    background:radial-gradient(circle at 35% 35%, #ffe08a, #ff8fd8 45%, #7a3cff 80%);
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 0 0 2px rgba(255,255,255,0.5) inset;
-  }
-  .header-icons{display:flex;gap:18px;align-items:center;}
-  .icon-btn{
-    width:22px;height:22px;color:#fff;opacity:0.95;
-    cursor:pointer;
-  }
-  .icon-wrap{position:relative;display:flex;}
-  .cart-badge{
-    position:absolute;
-    top:-7px;right:-8px;
-    background:#ff3b3b;
-    color:#fff;
-    font-size:10px;
-    font-weight:800;
-    min-width:16px;
-    height:16px;
-    border-radius:9px;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:0 4px;
-    border:1.5px solid var(--purple);
-  }
-  .cart-badge.show{display:flex;}
-
-  /* ---------- home / store toggle slider ---------- */
-  .toggle-slider{
-    position:relative;
-    margin:18px 0 0;
-    height:44px;
-    border-radius:24px;
-    background:rgba(255,255,255,0.18);
-    border:1.5px solid rgba(255,255,255,0.35);
-    display:flex;
-    padding:4px;
-    cursor:pointer;
-    user-select:none;
-  }
-  .toggle-knob{
-    position:absolute;
-    top:4px;left:4px;
-    width:calc(50% - 4px);
-    height:calc(100% - 8px);
-    background:#fff;
-    border-radius:20px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.25);
-    transition:transform 0.35s cubic-bezier(.4,0,.2,1);
-    z-index:1;
-  }
-  .toggle-slider.store .toggle-knob{ transform:translateX(100%); }
-  .toggle-option{
-    position:relative;
-    z-index:2;
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    font-weight:700;
-    font-size:15px;
-    color:#fff;
-    transition:color 0.35s ease;
-  }
-  .toggle-slider.home .toggle-option.home,
-  .toggle-slider.store .toggle-option.store{ color:var(--purple); }
-
-  .app-body{
-    flex:1;
-    overflow-y:auto;
-    background:var(--bg);
-    padding-bottom:90px;
-    scrollbar-width:none;
-    position:relative;
-  }
-  .app-body::-webkit-scrollbar{display:none;}
-  .app-body.compact-open{padding-bottom:0;}
-
-  /* ---------- banner ---------- */
-  .banner-wrap{padding:16px 16px 0;}
-  .banner{
-    position:relative;
-    height:230px;
-    border-radius:22px;
-    overflow:hidden;
-    background:radial-gradient(circle at 50% 45%, #3d1e75 0%, #2a0f52 55%, #1c0a3d 100%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 8px 20px rgba(60,20,110,0.25);
-  }
-  .banner-rings{
-    position:absolute;
-    inset:0;
-    background:repeating-radial-gradient(circle at 50% 45%, transparent 0 18px, rgba(255,255,255,0.05) 18px 19px);
-  }
-  .zodiac-ring{
-    position:absolute;
-    top:50%;left:50%;
-    width:170px;height:170px;
-    transform:translate(-50%,-50%);
-    border:1.5px solid rgba(255,215,140,0.55);
-    border-radius:50%;
-  }
-  .zodiac-ring.small{width:120px;height:120px;border-color:rgba(255,215,140,0.35);}
-  .planet{ position:absolute; border-radius:50%; }
-  .planet.sun{width:34px;height:34px;top:22px;left:44%;background:radial-gradient(circle at 35% 35%,#ffe9a8,#ffb14d);}
-  .planet.p1{width:22px;height:22px;top:60px;left:16px;background:radial-gradient(circle at 35% 35%,#cfe8ff,#8fb8e8);}
-  .planet.p2{width:16px;height:16px;top:38px;left:76px;background:radial-gradient(circle at 35% 35%,#ffd08a,#d98a3a);}
-  .planet.p3{width:26px;height:26px;top:44px;right:18px;background:radial-gradient(circle at 35% 35%,#a8d6c8,#4f8f7a);}
-  .planet.p4{width:18px;height:18px;top:96px;right:24px;background:radial-gradient(circle at 35% 35%,#bcd8ff,#6f9fd8);}
-  .planet.p5{width:14px;height:14px;bottom:56px;right:60px;background:radial-gradient(circle at 35% 35%,#a8e0e0,#4fa0a0);}
-  .banner-content{ position:relative; z-index:5; text-align:center; color:#fff; }
-  .banner-content .welcome{ font-size:19px; font-weight:700; margin-bottom:10px; text-shadow:0 2px 6px rgba(0,0,0,0.3); }
-  .banner-logo-card{
-    background:#fff; border-radius:8px; padding:12px 22px;
-    display:flex; align-items:center; gap:8px; justify-content:center;
-    box-shadow:0 6px 16px rgba(0,0,0,0.3);
-  }
-  .banner-logo-card .logo{color:#1a1a2e;font-size:26px;}
-  .banner-logo-card .logo .live{color:#ff3b3b;}
-  .banner-deco{ position:absolute; bottom:8px; font-size:11px; color:rgba(255,255,255,0.5); }
-  .banner-deco.left{left:14px;}
-  .banner-deco.right{right:14px;}
-  .dots{ display:flex; justify-content:center; gap:6px; margin-top:10px; }
-  .dot{width:7px;height:7px;border-radius:50%;background:#d8cdf0;}
-  .dot.active{background:#ff6a3d;}
-
-  /* ---------- section header ---------- */
-  .section{padding:22px 16px 0;}
-  .section-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-  .section-title{ font-size:21px; font-weight:700; color:var(--text); }
-  .section-subtitle{ font-size:12.5px; color:var(--text-mute); font-weight:600; margin-top:-10px; margin-bottom:14px; }
-  .view-all{ color:var(--purple); font-weight:600; font-size:14px; cursor:pointer; white-space:nowrap; }
-
-  /* ---------- free tools grid ---------- */
-  .tools-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .tool-card{
-    border-radius:16px;
-    position:relative; overflow:hidden;
-    cursor:pointer;
-    box-shadow:0 4px 14px rgba(60,20,110,0.08);
-  }
-  .tool-card img{ display:block; width:100%; height:auto; }
-
-  /* ---------- refer banner ---------- */
-  .refer-banner{
-    margin-top:20px; background:linear-gradient(135deg,#fff3c4,#ffe9a0);
-    border-radius:18px; padding:18px 16px; position:relative; overflow:hidden;
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-  }
-  .refer-banner::before{
-    content:""; position:absolute; top:-40%;left:-10%; width:160%;height:180%;
-    background:conic-gradient(from 0deg, rgba(255,255,255,0.5) 0 8deg, transparent 8deg 20deg);
-    opacity:0.6; pointer-events:none;
-  }
-  .refer-content{position:relative;z-index:2;flex:0 0 auto;}
-  .refer-get{color:#8a3fd6;font-weight:800;font-style:italic;font-size:15px;letter-spacing:1px;}
-  .refer-free{color:#2fae4e;font-weight:900;font-size:34px;font-style:italic;line-height:1;text-shadow:1px 1px 0 #1e7a35;}
-  .refer-chat{color:#2fae4e;font-weight:900;font-size:30px;font-style:italic;line-height:1.1;text-shadow:1px 1px 0 #1e7a35;}
-  .refer-line2{font-size:15px;font-weight:700;color:var(--text);margin-top:8px;}
-  .refer-astro{font-weight:900;font-style:italic;font-size:22px;}
-  .refer-astro .live{color:#ff3b3b;}
-  .refer-astro .astro{background:linear-gradient(90deg,#8a3fd6,#3a5fd6);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .refer-right{position:relative;z-index:2;flex:0 0 auto;text-align:right;}
-  .refer-btn{
-    margin-top:10px; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
-    padding:9px 20px; border-radius:20px; font-weight:700; font-size:13px; white-space:nowrap;
-  }
-
-  /* ---------- astrologers row ---------- */
-  .astro-row{ display:flex; gap:14px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; }
-  .astro-row::-webkit-scrollbar{display:none;}
-  .astro-card{ flex:0 0 auto; width:150px; text-align:center; }
-  .astro-photo{
-    width:150px; height:150px; border-radius:16px;
-    background:linear-gradient(135deg,#d8cdf0,#b8a8e0); position:relative; overflow:hidden;
-  }
-  .astro-btn{
-    position:absolute; left:8px; right:8px; bottom:10px; padding:10px 0; border-radius:20px;
-    display:flex; align-items:center; justify-content:center; gap:6px; font-weight:700; font-size:14px; color:#fff;
-  }
-  .astro-btn.chat{background:linear-gradient(90deg,#ffcf3f,#ff9a1f);}
-  .astro-btn.call{background:linear-gradient(90deg,#9a4fe0,#6a1fd0);}
-  .astro-avatar{
-    position:absolute; top:0;left:0;right:0;bottom:0;
-    background:radial-gradient(circle at 50% 35%, #eecfa8 0 30%, transparent 31%), linear-gradient(180deg,#c9bce8,#a898d8);
-  }
-
-  /* ---------- recommended for you (home) ---------- */
-  .reco-row{ display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; }
-  .reco-row::-webkit-scrollbar{display:none;}
-  .reco-card{
-    flex:0 0 auto; width:132px; background:#fff; border-radius:16px; overflow:hidden;
-    box-shadow:0 4px 14px rgba(60,20,110,0.08); display:flex; flex-direction:column; cursor:pointer;
-  }
-  .reco-img{ height:88px; display:flex; align-items:center; justify-content:center; font-size:32px; position:relative; }
-  .reco-info{ padding:9px 10px 10px; display:flex; flex-direction:column; flex:1; }
-  .reco-name{ font-size:12px; font-weight:700; color:var(--text); line-height:1.25; min-height:30px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .reco-price-row{ display:flex; align-items:center; gap:5px; margin-top:5px; flex-wrap:wrap; }
-  .reco-price{ font-size:13px; font-weight:800; color:var(--purple); }
-  .reco-old-price{ font-size:10px; color:#a8a0b8; text-decoration:line-through; }
-  .reco-rating{ font-size:10px; color:#f5a623; margin-top:3px; font-weight:700; }
-  .reco-btn{
-    margin-top:8px; width:100%; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
-    padding:7px 0; border-radius:12px; font-weight:700; font-size:11.5px;
-  }
-
-  /* ---------- bottom nav ---------- */
-  .bottom-nav{
-    position:absolute; left:0;right:0;bottom:0; background:#fff; border-top:1px solid #eee;
-    display:flex; justify-content:space-around; align-items:center; padding:10px 6px 22px; z-index:40;
-  }
-  .nav-item{ display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--text-mute); font-size:11px; font-weight:600; cursor:pointer; }
-  .nav-item.active{color:var(--purple);}
-  .nav-icon{font-size:20px;line-height:1;}
-  .nav-icon.menu{
-    width:26px;height:26px;border-radius:50%; background:#2f6fe0; color:#fff;
-    display:flex;align-items:center;justify-content:center; font-size:13px; font-weight:800;
-  }
-
-  /* ---------- store view ---------- */
-  .store-view{padding:20px 16px 0;}
-  .store-view .section-header{margin-bottom:12px;}
-
-  .store-tabs{
-    display:flex; gap:6px; background:#fff; border-radius:14px; padding:5px;
-    box-shadow:0 2px 10px rgba(60,20,110,0.06); margin-bottom:18px;
-  }
-  .store-tab{
-    flex:1; text-align:center; padding:9px 0; border-radius:10px; font-size:12.5px; font-weight:700;
-    color:var(--text-soft); cursor:pointer; transition:all .2s ease;
-  }
-  .store-tab.active{ background:var(--purple); color:#fff; }
-
-  .intention-row{ display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; margin-bottom:18px; scrollbar-width:none; }
-  .intention-row::-webkit-scrollbar{display:none;}
-  .intention-chip{
-    flex:0 0 auto; width:84px; background:#fff; border-radius:14px; padding:12px 8px; text-align:center;
-    box-shadow:0 3px 10px rgba(60,20,110,0.06); border:1.5px solid transparent; cursor:pointer;
-  }
-  .intention-chip.active{ border-color:var(--purple); background:#f6efff; }
-  .intention-chip .emo{font-size:22px;}
-  .intention-chip .lbl{font-size:10.5px;font-weight:700;color:var(--text);margin-top:6px;line-height:1.2;}
-
-  .intention-banner{
-    display:block; width:100%; height:auto; border-radius:16px; margin-bottom:16px;
-    box-shadow:0 4px 14px rgba(60,20,110,0.08); object-fit:cover;
-  }
-
-  .store-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  .store-empty{
-    grid-column:1 / -1; text-align:center; padding:30px 10px; color:var(--text-mute);
-    font-size:13px; background:#fff; border-radius:16px;
-  }
-
-  .product-card{
-    background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 14px rgba(60,20,110,0.08);
-    display:flex; flex-direction:column; height:100%; cursor:pointer;
-  }
-  .product-img{ height:110px; display:flex; align-items:center; justify-content:center; font-size:40px; position:relative; overflow:hidden; }
-  .product-img::before{
-    content:""; position:absolute; inset:0;
-    background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), transparent 55%);
-  }
-  /* Product thumbnail images — sized relative to their container so a future
-     swap of the placeholder .svg for a real generated image needs no CSS changes. */
-  .product-thumb-img{
-    position:relative; z-index:1;
-    width:96%; height:96%;
-    object-fit:contain;
-  }
-  .product-img.rudraksh{background:radial-gradient(circle at 50% 40%,#6b4a2e,#3a2414);}
-  .product-img.ring{background:radial-gradient(circle at 50% 40%,#ffe08a,#c99a2e);}
-  .product-img.amethyst{background:radial-gradient(circle at 50% 40%,#e8c8ff,#9a5fd6);}
-  .product-img.pendant{background:radial-gradient(circle at 50% 40%,#a8e0e0,#3f8a8a);}
-  .product-img.yantra{background:radial-gradient(circle at 50% 40%,#ffd88a,#b8721f);}
-  .product-img.mala{background:radial-gradient(circle at 50% 40%,#f0c8c8,#a83f5f);}
-  .product-img.tigereye{background:radial-gradient(circle at 50% 40%,#e0b96a,#6b4a1e);}
-  .product-img.citrine{background:radial-gradient(circle at 50% 40%,#ffe9a0,#c98a1f);}
-  .product-badge{
-    position:absolute; top:8px;left:8px; background:#ff3b3b; color:#fff; font-size:10px; font-weight:700;
-    padding:3px 8px; border-radius:10px; z-index:2;
-  }
-  .bestseller-badge{
-    position:absolute; top:8px;right:8px; background:#241a3b; color:#fff; font-size:9px; font-weight:700;
-    padding:3px 7px; border-radius:8px; z-index:2; letter-spacing:0.3px;
-  }
-  .product-info{ padding:10px 12px 12px; display:flex; flex-direction:column; flex:1; }
-  .product-name{
-    font-size:13.5px; font-weight:700; color:var(--text); line-height:1.25; min-height:34px;
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-  }
-  .product-meta{ display:flex; align-items:center; gap:6px; margin-top:6px; min-height:19px; flex-wrap:wrap; }
-  .product-price{font-size:14px;font-weight:800;color:var(--purple);}
-  .product-old-price{font-size:11.5px;color:#a8a0b8;text-decoration:line-through;}
-  .product-rating{font-size:11px;color:#f5a623;margin-top:4px;font-weight:700;}
-  .add-cart-btn{
-    margin-top:auto; width:100%; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
-    padding:8px 0; border-radius:14px; font-weight:700; font-size:12.5px; display:flex; align-items:center;
-    justify-content:center; gap:5px;
-  }
-
-  /* ---------- USP row ---------- */
-  .usp-section{ margin-top:22px; background:#fff; border-radius:18px; padding:18px 14px; box-shadow:0 4px 14px rgba(60,20,110,0.06); }
-  .usp-title{ font-size:15px; font-weight:700; color:var(--text); text-align:center; margin-bottom:14px; }
-  .usp-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-  .usp-item{ text-align:center; }
-  .usp-icon{ font-size:24px; }
-  .usp-name{ font-size:11px; font-weight:700; color:var(--text); margin-top:6px; }
-  .usp-desc{ font-size:9.5px; color:var(--text-mute); margin-top:2px; line-height:1.3; }
-
-  /* ---------- compact top bar (used across secondary screens) ---------- */
-  .pdp-header{
-    position:sticky; top:0; z-index:20; background:#fff; display:flex; align-items:center;
-    justify-content:space-between; padding:14px 14px; border-bottom:1px solid #eee;
-  }
-  .pdp-back{
-    width:34px;height:34px; border-radius:50%; border:none; background:var(--bg); color:var(--text);
-    font-size:18px; display:flex;align-items:center;justify-content:center; cursor:pointer;
-  }
-  .pdp-header-title{ font-size:15px; font-weight:700; color:var(--text); }
-  .pdp-header-icons{display:flex;gap:14px;font-size:18px;color:#3a2a5a;align-items:center;}
-
-  /* ---------- product detail page ---------- */
-  .pdp-gallery{ height:260px; position:relative; display:flex; align-items:center; justify-content:center; font-size:90px; overflow:hidden; }
-  .pdp-gallery::before{
-    content:""; position:absolute; inset:0;
-    background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), transparent 55%);
-  }
-  .pdp-badge-lg{ position:absolute; top:14px;left:14px; background:#ff3b3b; color:#fff; font-size:12px; font-weight:700; padding:5px 12px; border-radius:12px; z-index:2; }
-  .pdp-dots{ display:flex; justify-content:center; gap:6px; padding:10px 0; }
-  .pdp-dots .dot.active{ background:var(--purple); width:16px; border-radius:4px; }
-
-  .pdp-body{padding:4px 16px 24px;}
-  .pdp-category{font-size:12px;color:var(--text-mute);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
-  .pdp-title{font-size:19px;font-weight:800;color:var(--text);margin-top:4px;line-height:1.3;}
-  .pdp-rating-row{display:flex;align-items:center;gap:10px;margin-top:10px;}
-  .pdp-rating-badge{ background:var(--green); color:#fff; font-size:12.5px; font-weight:700; padding:3px 8px; border-radius:6px; display:flex; align-items:center; gap:3px; }
-  .pdp-rating-count{font-size:12.5px;color:var(--text-mute);font-weight:600;}
-  .pdp-price-row{display:flex;align-items:baseline;gap:10px;margin-top:12px;flex-wrap:wrap;}
-  .pdp-price{font-size:26px;font-weight:800;color:var(--text);}
-  .pdp-old-price{font-size:15px;color:#a8a0b8;text-decoration:line-through;}
-  .pdp-discount{font-size:14px;color:var(--green);font-weight:700;}
-  .pdp-tax-note{font-size:11.5px;color:var(--text-mute);margin-top:4px;}
-
-  .pdp-reason{
-    margin-top:14px; background:#f6efff; border:1px solid #e5d4fb; border-radius:14px; padding:12px 14px;
-    display:flex; gap:10px; align-items:flex-start;
-  }
-  .pdp-reason .icon{font-size:18px;flex:0 0 auto;}
-  .pdp-reason .txt{font-size:12px;color:#5a2fae;line-height:1.5;}
-  .pdp-reason .txt b{color:var(--purple-deep);}
-
-  .pdp-divider{height:8px;background:var(--bg);margin:16px -16px;}
-  .pdp-section-title{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:10px;}
-
-  .pdp-offers{display:flex;flex-direction:column;gap:10px;}
-  .pdp-offer{display:flex;gap:10px;font-size:12.5px;color:#3a2a5a;line-height:1.4;}
-  .pdp-offer .tag{font-size:15px;flex:0 0 auto;}
-
-  .pdp-delivery{display:flex;gap:8px;}
-  .pdp-pincode-input{ flex:1; border:1.5px solid #e0d8f0; border-radius:10px; padding:9px 12px; font-size:13px; color:var(--text); }
-  .pdp-check-btn{ background:var(--purple); color:#fff; border:none; padding:0 18px; border-radius:10px; font-weight:700; font-size:13px; }
-  .pdp-delivery-note{font-size:12px;color:var(--text-soft);margin-top:8px;}
-
-  .pdp-highlights{list-style:none;display:flex;flex-direction:column;gap:8px;}
-  .pdp-highlights li{ font-size:12.5px; color:#3a2a5a; padding-left:18px; position:relative; line-height:1.4; }
-  .pdp-highlights li::before{ content:"✓"; position:absolute; left:0; color:var(--green); font-weight:800; }
-
-  .pdp-trust-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:4px; }
-  .pdp-trust-item{ font-size:11px; color:var(--text-soft); font-weight:600; display:flex; align-items:center; gap:5px; }
-  .pdp-trust-item .chk{color:var(--green);font-weight:800;}
-
-  .pdp-description{font-size:12.5px;color:var(--text-soft);line-height:1.6;}
-
-  .pdp-review-summary{display:flex;gap:20px;align-items:center;}
-  .pdp-review-score{text-align:center;flex:0 0 auto;}
-  .pdp-review-score .num{font-size:32px;font-weight:800;color:var(--text);line-height:1;}
-  .pdp-review-score .stars{color:#f5a623;font-size:13px;margin-top:4px;}
-  .pdp-review-score .count{font-size:11px;color:var(--text-mute);margin-top:2px;}
-  .pdp-review-bars{flex:1;display:flex;flex-direction:column;gap:5px;}
-  .pdp-bar-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-soft);}
-  .pdp-bar-row span{width:20px;flex:0 0 auto;}
-  .pdp-bar{flex:1;height:6px;background-color:#efe9f7;border-radius:4px;overflow:hidden;}
-  .pdp-bar div{height:100%;background:#f5a623;border-radius:4px;}
-
-  .pdp-action-bar{
-    position:sticky; bottom:0; z-index:20; background:#fff; border-top:1px solid #eee;
-    display:flex; gap:10px; padding:12px 16px;
-  }
-  .pdp-cart-btn{ flex:1; background:#fff; color:var(--purple); border:1.5px solid var(--purple); padding:12px 0; border-radius:12px; font-weight:700; font-size:14px; }
-  .pdp-buy-btn{ flex:1; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none; padding:12px 0; border-radius:12px; font-weight:700; font-size:14px; }
-
-  /* ---------- cart ---------- */
-  .cart-body{padding:16px;}
-  .cart-item{
-    display:flex; align-items:center; gap:12px; background:#fff; border-radius:16px; padding:12px;
-    box-shadow:0 3px 10px rgba(60,20,110,0.06); margin-bottom:12px;
-  }
-  .cart-thumb{ width:60px;height:60px; border-radius:12px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; font-size:26px; position:relative; overflow:hidden; }
-  .cart-thumb::before{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), transparent 55%); }
-  .cart-item-info{ flex:1; min-width:0; }
-  .cart-item-name{ font-size:13px; font-weight:700; color:var(--text); line-height:1.3; }
-  .cart-item-price{ font-size:13.5px; font-weight:800; color:var(--purple); margin-top:4px; }
-  .cart-item-right{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
-  .cart-remove{ background:none; border:none; color:var(--text-mute); font-size:16px; cursor:pointer; line-height:1; }
-  .qty-stepper{ display:flex; align-items:center; gap:8px; background:var(--bg); border-radius:10px; padding:4px 8px; }
-  .qty-stepper button{ background:none; border:none; color:var(--purple); font-size:15px; font-weight:800; width:18px; cursor:pointer; }
-  .qty-stepper .qty-num{ font-size:12.5px; font-weight:700; color:var(--text); min-width:14px; text-align:center; }
-
-  .cart-empty{ text-align:center; padding:60px 20px; color:var(--text-mute); }
-  .cart-empty .big{font-size:44px;margin-bottom:12px;}
-  .cart-empty .cta{
-    margin-top:16px; display:inline-block; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff;
-    border:none; padding:11px 26px; border-radius:20px; font-weight:700; font-size:13.5px; cursor:pointer;
-  }
-
-  .cart-reco-row{ display:flex; gap:10px; }
-  .cart-reco-card{ flex:1; background:#fff; border-radius:14px; padding:10px; box-shadow:0 3px 10px rgba(60,20,110,0.06); text-align:center; }
-  .cart-reco-img{ height:56px; display:flex; align-items:center; justify-content:center; font-size:24px; border-radius:10px; margin-bottom:8px; position:relative; overflow:hidden; }
-  .cart-reco-name{ font-size:11.5px; font-weight:700; color:var(--text); line-height:1.3; min-height:28px; }
-  .cart-reco-price{ font-size:12.5px; font-weight:800; color:var(--purple); margin-top:4px; }
-  .cart-reco-add{ margin-top:8px; width:100%; background:#f6efff; color:var(--purple); border:1.5px solid var(--purple); padding:6px 0; border-radius:10px; font-weight:700; font-size:11.5px; }
-
-  .cart-summary{ background:#fff; border-radius:16px; padding:16px; box-shadow:0 3px 10px rgba(60,20,110,0.06); margin-top:18px; }
-  .summary-row{ display:flex; justify-content:space-between; font-size:13px; color:var(--text-soft); margin-bottom:9px; }
-  .summary-row.total{ font-size:16px; font-weight:800; color:var(--text); border-top:1px dashed #e0d8f0; padding-top:10px; margin-top:4px; margin-bottom:0; }
-  .summary-row .free{ color:var(--green); font-weight:700; }
-  .summary-row .discount{ color:var(--green); font-weight:700; }
-  .checkout-btn{
-    margin-top:16px; width:100%; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
-    padding:14px 0; border-radius:14px; font-weight:700; font-size:14.5px;
-  }
-
-  /* ---------- checkout ---------- */
-  .checkout-section{ margin:16px; background:#fff; border-radius:16px; padding:16px; box-shadow:0 3px 10px rgba(60,20,110,0.06); }
-  .checkout-section + .checkout-section{ margin-top:0; }
-  .checkout-heading{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-  .checkout-heading .lbl{ font-size:13.5px; font-weight:700; color:var(--text); }
-  .change-link{ color:var(--purple); font-size:12.5px; font-weight:700; cursor:pointer; }
-  .addr-name{ font-size:13px; font-weight:700; color:var(--text); }
-  .addr-text{ font-size:12.5px; color:var(--text-soft); line-height:1.6; margin-top:4px; }
-
-  .payment-option{
-    display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; border:1.5px solid #eee0;
-    background:var(--bg); margin-bottom:10px; cursor:pointer;
-  }
-  .payment-option:last-child{margin-bottom:0;}
-  .payment-option.selected{ border-color:var(--purple); background:#f6efff; }
-  .radio-dot{ width:18px;height:18px;border-radius:50%; border:2px solid #cbb8ea; flex:0 0 auto; position:relative; }
-  .payment-option.selected .radio-dot{ border-color:var(--purple); }
-  .payment-option.selected .radio-dot::after{
-    content:""; position:absolute; inset:3px; border-radius:50%; background:var(--purple);
-  }
-  .payment-icon{font-size:18px;}
-  .payment-label{ font-size:13px; font-weight:700; color:var(--text); }
-  .payment-sub{ font-size:10.5px; color:var(--text-mute); margin-top:1px; }
-
-  .place-order-btn{
-    margin:16px; width:calc(100% - 32px); background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
-    padding:15px 0; border-radius:14px; font-weight:700; font-size:15px;
-  }
-
-  /* ---------- confirmation ---------- */
-  .confirm-wrap{ padding:40px 24px; text-align:center; }
-  .confirm-check{
-    width:84px;height:84px;border-radius:50%; background:linear-gradient(135deg,#3fcf6e,#1f9e4a); margin:0 auto 20px;
-    display:flex; align-items:center; justify-content:center; font-size:42px; color:#fff;
-    box-shadow:0 10px 24px rgba(47,174,78,0.35);
-  }
-  .confirm-title{ font-size:20px; font-weight:800; color:var(--text); }
-  .confirm-sub{ font-size:13px; color:var(--text-soft); margin-top:6px; }
-  .confirm-card{
-    margin-top:24px; background:#fff; border-radius:16px; padding:18px; text-align:left;
-    box-shadow:0 4px 14px rgba(60,20,110,0.08);
-  }
-  .confirm-row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-soft); margin-bottom:10px; }
-  .confirm-row:last-child{margin-bottom:0;}
-  .confirm-row .v{ font-weight:700; color:var(--text); }
-  .confirm-delivery{
-    margin-top:14px; background:#f6efff; border-radius:14px; padding:14px; text-align:left;
-  }
-  .confirm-delivery .lbl{ font-size:11.5px; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
-  .confirm-delivery .date{ font-size:16px; font-weight:800; color:var(--text); margin-top:4px; }
-  .confirm-delivery .note{ font-size:11.5px; color:var(--text-soft); margin-top:6px; }
-  .confirm-btn-row{ display:flex; gap:10px; margin-top:20px; }
-  .confirm-track-btn{ flex:1; background:#fff; color:var(--purple); border:1.5px solid var(--purple); padding:12px 0; border-radius:12px; font-weight:700; font-size:13px; }
-  .confirm-next{
-    margin-top:24px; background:#fff; border-radius:16px; padding:16px; text-align:left; box-shadow:0 4px 14px rgba(60,20,110,0.06);
-  }
-  .confirm-next .t{ font-size:13.5px; font-weight:700; color:var(--text); }
-  .confirm-next .d{ font-size:12px; color:var(--text-soft); margin-top:6px; line-height:1.5; }
-  .confirm-journey-btn{
-    margin-top:12px; width:100%; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
-    padding:12px 0; border-radius:12px; font-weight:700; font-size:13.5px;
-  }
-
-  /* ---------- astro journey ---------- */
-  .journey-hero{
-    margin:16px; background:linear-gradient(135deg,#3d1e75,#2a0f52); border-radius:18px; padding:18px; color:#fff;
-  }
-  .journey-hero .prod{ font-size:15px; font-weight:800; }
-  .journey-hero .meta{ font-size:11.5px; color:#d8cdf0; margin-top:8px; display:flex; justify-content:space-between; }
-  .journey-status{
-    display:inline-block; margin-top:10px; background:rgba(47,174,78,0.25); color:#7bf0a0; font-size:11px;
-    font-weight:700; padding:4px 10px; border-radius:10px;
-  }
-  .timeline{ padding:6px 16px 16px; }
-  .timeline-item{ display:flex; gap:14px; position:relative; padding-bottom:26px; }
-  .timeline-item:last-child{padding-bottom:0;}
-  .timeline-item::before{
-    content:""; position:absolute; left:11px; top:26px; bottom:0; width:2px; background:#e5d4fb;
-  }
-  .timeline-item:last-child::before{display:none;}
-  .timeline-dot{
-    width:24px;height:24px;border-radius:50%; background:#fff; border:2.5px solid var(--purple); flex:0 0 auto;
-    display:flex;align-items:center;justify-content:center; font-size:10px; font-weight:800; color:var(--purple); z-index:1;
-  }
-  .timeline-item.done .timeline-dot{ background:var(--purple); color:#fff; }
-  .timeline-body .day{ font-size:10.5px; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.4px; }
-  .timeline-body .title{ font-size:13.5px; font-weight:700; color:var(--text); margin-top:2px; }
-  .timeline-body .desc{ font-size:11.5px; color:var(--text-soft); margin-top:3px; line-height:1.4; }
-  .journey-cta{
-    margin:8px 16px 16px; width:calc(100% - 32px); background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff;
-    border:none; padding:14px 0; border-radius:14px; font-weight:700; font-size:14px;
-  }
-
-  /* ---------- retention / follow-up ---------- */
-  .retention-body{padding:16px;}
-  .feedback-card{ background:#fff; border-radius:16px; padding:18px; box-shadow:0 4px 14px rgba(60,20,110,0.08); }
-  .feedback-q{ font-size:14px; font-weight:700; color:var(--text); line-height:1.4; }
-  .feedback-sub{ font-size:11.5px; color:var(--text-mute); margin-top:6px; line-height:1.4; }
-  .feedback-options{ display:flex; gap:10px; margin-top:16px; }
-  .feedback-opt{
-    flex:1; text-align:center; padding:14px 4px; border-radius:14px; background:var(--bg); border:1.5px solid transparent; cursor:pointer;
-  }
-  .feedback-opt.selected{ border-color:var(--purple); background:#f6efff; }
-  .feedback-opt .emo{font-size:24px;}
-  .feedback-opt .lbl{font-size:11px;font-weight:700;color:var(--text);margin-top:6px;}
-  .feedback-thanks{ margin-top:12px; font-size:12px; color:var(--green); font-weight:700; display:none; }
-  .feedback-thanks.show{display:block;}
-
-  .reminders-title{ font-size:15.5px; font-weight:700; color:var(--text); margin:22px 0 12px; }
-  .reminder-card{
-    display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:13px;
-    box-shadow:0 3px 10px rgba(60,20,110,0.06); margin-bottom:10px;
-  }
-  .reminder-icon{ font-size:22px; flex:0 0 auto; }
-  .reminder-info{flex:1;min-width:0;}
-  .reminder-title{ font-size:12.5px; font-weight:700; color:var(--text); }
-  .reminder-desc{ font-size:11px; color:var(--text-mute); margin-top:2px; }
-  .reminder-btn{
-    flex:0 0 auto; background:#f6efff; color:var(--purple); border:1.5px solid var(--purple); padding:7px 14px;
-    border-radius:12px; font-weight:700; font-size:11.5px;
-  }
-
-  .retention-offer{
-    margin-top:20px; background:linear-gradient(135deg,#2e1152,#4a1a8c 60%,#7a1fd6); border-radius:18px; padding:20px;
-    color:#fff; text-align:center; position:relative; overflow:hidden;
-  }
-  .retention-offer::before{
-    content:""; position:absolute; inset:0;
-    background:radial-gradient(circle at 80% 0%, rgba(255,255,255,0.18), transparent 55%);
-  }
-  .retention-offer .big{ font-size:24px; font-weight:800; position:relative; z-index:1; }
-  .retention-offer .sub{ font-size:12.5px; color:#d8cdf0; margin-top:4px; position:relative; z-index:1; }
-  .retention-offer .shop-btn{
-    margin-top:14px; background:#fff; color:var(--purple); border:none; padding:11px 26px; border-radius:20px;
-    font-weight:700; font-size:13.5px; position:relative; z-index:1;
-  }
-
-  /* ---------- search ---------- */
-  .search-body{padding:14px 16px;}
-  .search-input-wrap{
-    display:flex; align-items:center; gap:8px; background:#fff; border-radius:14px; padding:10px 14px;
-    box-shadow:0 3px 10px rgba(60,20,110,0.06);
-  }
-  .search-input{ flex:1; border:none; outline:none; font-size:13.5px; color:var(--text); background:transparent; }
-  .search-hint{ font-size:12px; color:var(--text-mute); margin-top:14px; text-align:center; }
-  .search-results{ margin-top:14px; display:flex; flex-direction:column; gap:10px; }
-  .search-result-row{
-    display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:10px;
-    box-shadow:0 3px 10px rgba(60,20,110,0.06); cursor:pointer;
-  }
-  .search-thumb{ width:46px;height:46px;border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:20px; position:relative; overflow:hidden; flex:0 0 auto; }
-  .search-result-name{ font-size:12.5px; font-weight:700; color:var(--text); }
-  .search-result-cat{ font-size:10.5px; color:var(--text-mute); margin-top:2px; }
-  .search-result-price{ margin-left:auto; font-size:13px; font-weight:800; color:var(--purple); }
-
-  /* ---------- toast ---------- */
-  .toast{
-    position:absolute; left:50%; bottom:106px; transform:translateX(-50%) translateY(20px);
-    background:var(--text); color:#fff; padding:10px 18px; border-radius:20px; font-size:12.5px; font-weight:600;
-    opacity:0; pointer-events:none; transition:all .3s ease; z-index:200; white-space:nowrap; max-width:85%;
-    text-overflow:ellipsis; overflow:hidden;
-  }
-  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-  svg{display:block;}
-</style>
 </head>
 <body>
 
@@ -748,25 +30,30 @@
     <!-- App header -->
     <div class="app-header" id="appHeader">
       <div class="header-row">
-        <div class="logo">
+        <div class="logo" onclick="resetTo(['home'])">
           <span class="logo-icon"></span>
           <span>ASTRO<span class="live">LIVE</span></span>
         </div>
         <div class="header-icons">
           <svg class="icon-btn" onclick="openSearch()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span class="icon-wrap" onclick="navigateTo('cart')">
-            <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <span class="icon-wrap cart-icon-wrap" id="cartIconWrap" onclick="onBagClick()" title="Astro Store">
+            <svg class="icon-btn cart-icon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M7 8V6a5 5 0 0 1 10 0v2h3l-1.5 11a1 1 0 0 1-1 .88H6.5a1 1 0 0 1-1-.88L4 8h3zm2 0h6V6a3 3 0 0 0-6 0v2z"/>
+            </svg>
             <span class="cart-badge" id="cartBadge">0</span>
           </span>
-          <svg class="icon-btn" onclick="showToast('No new notifications')" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="icon-btn wallet-btn" onclick="showToast('Astro Wallet: ₹0 balance')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/><circle cx="16" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+          </span>
         </div>
       </div>
 
-      <!-- Home / Store toggle -->
-      <div class="toggle-slider home" id="toggleSlider">
-        <div class="toggle-knob"></div>
-        <div class="toggle-option home" data-target="home">Home</div>
-        <div class="toggle-option store" data-target="store">Store</div>
+      <div class="mode-tabs" id="modeTabs">
+        <button class="mode-tab active" type="button" data-mode="home" onclick="setModeTab('home')">Home</button>
+        <button class="mode-tab" type="button" data-mode="store" onclick="setModeTab('store')">
+          Store
+          <span class="mode-tab-new">NEW</span>
+        </button>
       </div>
     </div>
 
@@ -776,64 +63,147 @@
       <!-- ============ HOME ============ -->
       <div id="homeView">
 
+        <!-- Banner: consultation CTA (matches live app) -->
         <div class="banner-wrap">
           <div class="banner">
-            <div class="banner-rings"></div>
-            <div class="zodiac-ring"></div>
-            <div class="zodiac-ring small"></div>
-            <div class="planet sun"></div>
-            <div class="planet p1"></div>
-            <div class="planet p2"></div>
-            <div class="planet p3"></div>
-            <div class="planet p4"></div>
-            <div class="planet p5"></div>
-            <div class="banner-content">
-              <div class="welcome">Welcome to</div>
-              <div class="banner-logo-card">
-                <span class="logo">ASTRO<span class="live">LIVE</span></span>
+            <div class="banner-photo">
+              <div class="banner-photo-avatar">
+                <!-- Person silhouette placeholder -->
+                <svg viewBox="0 0 116 148" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- saree/dupatta body -->
+                  <path d="M18 148 C18 108 30 90 58 86 C86 90 98 108 98 148Z" fill="#d4822a"/>
+                  <!-- dupatta drape -->
+                  <path d="M20 110 Q10 100 14 88 Q22 94 30 110Z" fill="#e09030"/>
+                  <path d="M96 110 Q106 100 102 88 Q94 94 86 110Z" fill="#e09030"/>
+                  <!-- neck -->
+                  <rect x="51" y="62" width="14" height="18" rx="7" fill="#e8b88a"/>
+                  <!-- head -->
+                  <ellipse cx="58" cy="48" rx="22" ry="25" fill="#e8b88a"/>
+                  <!-- hair -->
+                  <ellipse cx="58" cy="30" rx="22" ry="14" fill="#2a1a0a"/>
+                  <path d="M36 36 Q34 55 38 70 Q44 58 46 50Z" fill="#2a1a0a"/>
+                  <path d="M80 36 Q82 55 78 70 Q72 58 70 50Z" fill="#2a1a0a"/>
+                  <!-- face details -->
+                  <ellipse cx="50" cy="50" rx="3" ry="3.5" fill="#4a3020"/>
+                  <ellipse cx="66" cy="50" rx="3" ry="3.5" fill="#4a3020"/>
+                  <path d="M52 60 Q58 64 64 60" stroke="#c0705a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                  <!-- bindi -->
+                  <circle cx="58" cy="43" r="1.8" fill="#cc2200"/>
+                  <!-- hands -->
+                  <path d="M30 110 Q22 118 26 128 Q34 122 38 112Z" fill="#e8b88a"/>
+                  <path d="M86 110 Q94 118 90 128 Q82 122 78 112Z" fill="#e8b88a"/>
+                </svg>
               </div>
             </div>
-            <span class="banner-deco left">🔮</span>
-            <span class="banner-deco right">🤚</span>
+            <div class="banner-text">
+              <span class="banner-free-badge">FREE</span>
+              <div class="banner-headline">Get Your First<br>Consultation Free</div>
+              <button class="banner-cta" onclick="onNavClick('consultant')">CONNECT NOW</button>
+            </div>
+            <span class="banner-sparkle s1">✦</span>
+            <span class="banner-sparkle s2">✦</span>
+            <span class="banner-sparkle s3">✦</span>
           </div>
           <div class="dots">
             <span class="dot active"></span>
             <span class="dot"></span>
+            <span class="dot"></span>
           </div>
         </div>
 
-        <!-- Recommended for You -->
-        <div class="section">
-          <div class="section-header">
-            <span class="section-title">Recommended for You</span>
-            <span class="view-all" onclick="goToStoreTab('forYou')">View All ›</span>
+        <!-- Live astrologers strip -->
+        <div class="live-strip">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:17px;font-weight:700;color:var(--text);">Live Now</span>
+            <span class="view-all" onclick="onNavClick('live')">View All ›</span>
           </div>
-          <div class="section-subtitle">Based on your recent consultation</div>
-          <div class="reco-row" id="recoRow"></div>
+          <div class="live-strip-row">
+            <div class="live-item">
+              <div class="live-avatar-wrap">
+                <div class="live-avatar">
+                  <svg viewBox="0 0 44 50" fill="none"><ellipse cx="22" cy="14" rx="10" ry="11" fill="#e8a870"/><path d="M22 6 Q12 6 12 14 Q12 8 22 8 Q32 8 32 14 Q32 6 22 6Z" fill="#2a1a0a"/><rect x="18" y="24" width="8" height="8" rx="4" fill="#e8a870"/><path d="M6 50 C6 36 12 30 22 28 C32 30 38 36 38 50Z" fill="#7a3fd6"/></svg>
+                </div>
+                <span class="live-badge">LIVE</span>
+              </div>
+              <span class="live-name">Tarot…</span>
+            </div>
+            <div class="live-item">
+              <div class="live-avatar-wrap">
+                <div class="live-avatar av2">
+                  <svg viewBox="0 0 44 50" fill="none"><ellipse cx="22" cy="14" rx="10" ry="11" fill="#d4905a"/><path d="M22 5 Q12 5 12 13 Q14 7 22 7 Q30 7 32 13 Q32 5 22 5Z" fill="#1a0a00"/><rect x="18" y="24" width="8" height="8" rx="4" fill="#d4905a"/><path d="M6 50 C6 36 12 30 22 28 C32 30 38 36 38 50Z" fill="#e09030"/></svg>
+                </div>
+                <span class="live-badge">LIVE</span>
+              </div>
+              <span class="live-name">Shree</span>
+            </div>
+            <div class="live-item">
+              <div class="live-avatar-wrap">
+                <div class="live-avatar av3">
+                  <svg viewBox="0 0 44 50" fill="none"><ellipse cx="22" cy="14" rx="10" ry="11" fill="#f4c8a8"/><path d="M12 12 Q14 4 22 4 Q30 4 32 12 Q30 6 22 6 Q14 6 12 12Z" fill="#3a1a0a"/><rect x="18" y="24" width="8" height="8" rx="4" fill="#f4c8a8"/><path d="M6 50 C6 36 12 30 22 28 C32 30 38 36 38 50Z" fill="#cc3070"/></svg>
+                </div>
+                <span class="live-badge">LIVE</span>
+              </div>
+              <span class="live-name">Elevat…</span>
+            </div>
+            <div class="live-view-all" onclick="onNavClick('live')">
+              <div class="live-view-circle">View<br>all</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Free Tools -->
+        <!-- Free Tools (5 tiles — matches live app) -->
         <div class="section">
           <div class="section-header">
             <span class="section-title">Free Tools</span>
             <span class="view-all">View All ›</span>
           </div>
           <div class="tools-grid">
-            <div class="tool-card">
-              <img src="asset/banners/love-calculator-banner.png" alt="Love Calculator">
+            <div class="tool-card" onclick="showToast('Love Calculator')">
+              <img src="asset/banners/love-calculator-banner.png" alt="Love Calculator" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#ff6e9c,#c0325a)';this.parentElement.style.height='86px';this.parentElement.innerHTML+='<div style=\'padding:14px;color:#fff;font-weight:700;font-size:13px;\'>💞 Love Calculator</div>'">
             </div>
-            <div class="tool-card">
-              <img src="asset/banners/daily-horoscope-banner.png" alt="Daily Horoscope">
+            <div class="tool-card" onclick="showToast('Daily Horoscope')">
+              <img src="asset/banners/daily-horoscope-banner.png" alt="Daily Horoscope" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#5b6af0,#2e3ac0)';this.parentElement.style.height='86px';this.parentElement.innerHTML+='<div style=\'padding:14px;color:#fff;font-weight:700;font-size:13px;\'>☀️ Daily Horoscope</div>'">
             </div>
-            <div class="tool-card">
-              <img src="asset/banners/todays-panchanga-banner.png" alt="Today's Panchanga">
+            <div class="tool-card" onclick="showToast('Today\'s Panchanga')">
+              <img src="asset/banners/todays-panchanga-banner.png" alt="Today's Panchanga" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1a3a5c,#0d2040)';this.parentElement.style.height='86px';this.parentElement.innerHTML+='<div style=\'padding:14px;color:#fff;font-weight:700;font-size:13px;\'>📅 Today\'s Panchanga</div>'">
             </div>
-            <div class="tool-card">
-              <img src="asset/banners/kundli-match-banner.png" alt="Kundli's Match">
+            <div class="tool-card" onclick="showToast('Kundli\'s Match')">
+              <img src="asset/banners/kundli-match-banner.png" alt="Kundli's Match" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#2a1a4a,#1a0a2e)';this.parentElement.style.height='86px';this.parentElement.innerHTML+='<div style=\'padding:14px;color:#fff;font-weight:700;font-size:13px;\'>💑 Kundli\'s Match</div>'">
             </div>
           </div>
+        </div>
 
-          <!-- Refer banner -->
+        <!-- Astro Store (in-app insert — not a 6th tab) -->
+        <div class="section" style="padding-bottom:0;">
+          <div class="shop-cta" onclick="goToStoreTab('forYou')">
+            <div class="shop-cta-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M6 8h12l-1 13H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+            </div>
+            <div class="shop-cta-copy">
+              <div class="shop-cta-kicker">Now in the app</div>
+              <div class="shop-cta-title">Astro Store</div>
+              <div class="shop-cta-sub">Rudraksh, yantras &amp; remedies after your reading</div>
+            </div>
+            <span class="shop-cta-btn">Shop now</span>
+          </div>
+        </div>
+
+        <!-- Shop recos: returning = last reading; new = kundli -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title" style="font-size:17px;">Recommended for you</span>
+            <span class="view-all" onclick="goToStoreTab('forYou')">View All ›</span>
+          </div>
+          <div class="reco-chips">
+            <button class="reco-chip active" type="button" id="recoChipReturning" onclick="setRecoMode('returning')">Your readings</button>
+            <button class="reco-chip" type="button" id="recoChipNew" onclick="setRecoMode('new')">Your Kundli</button>
+          </div>
+          <div class="reco-why" id="recoWhy">Because of your Career reading</div>
+          <div class="reco-row" id="recoRow"></div>
+        </div>
+
+        <!-- Refer & Earn banner -->
+        <div class="section" style="padding-bottom:0;">
           <div class="refer-banner">
             <div class="refer-content">
               <div class="refer-get">GET A</div>
@@ -848,30 +218,70 @@
           </div>
         </div>
 
-        <!-- Chat with astrologers -->
+        <!-- Chat with our Astrologers -->
         <div class="section">
           <div class="section-header">
-            <span class="section-title">Chat with our Astrologers</span>
-            <span class="view-all">View All ›</span>
+            <span class="section-title" style="font-size:17px;">Chat with our Astrologers</span>
+            <span class="view-all" onclick="onNavClick('consultant')">View All ›</span>
           </div>
           <div class="astro-row">
             <div class="astro-card">
-              <div class="astro-photo">
-                <div class="astro-avatar"></div>
-                <div class="astro-btn chat">💬 Chat</div>
+              <div class="astro-photo-wrap ap1">
+                <svg viewBox="0 0 68 78" fill="none"><ellipse cx="34" cy="22" rx="14" ry="16" fill="#e8a870"/><path d="M34 8 Q20 8 20 20 Q22 12 34 12 Q46 12 48 20 Q48 8 34 8Z" fill="#2a1a0a"/><rect x="28" y="36" width="12" height="10" rx="6" fill="#e8a870"/><path d="M8 78 C8 56 18 46 34 44 C50 46 60 56 60 78Z" fill="#d97020"/><path d="M8 58 Q2 50 6 42 Q14 48 18 60Z" fill="#e09030"/></svg>
               </div>
+              <div class="astro-card-name">Chavvi</div>
+              <div class="astro-card-meta"><span class="astro-free">Free</span><span class="astro-sep">|</span><span class="astro-exp">Exp: 4Yrs</span></div>
+              <button class="astro-action-btn chat-btn" onclick="startConsult('chavvi','chat')">Chat</button>
             </div>
             <div class="astro-card">
-              <div class="astro-photo">
-                <div class="astro-avatar"></div>
-                <div class="astro-btn call">📞 Call</div>
+              <div class="astro-photo-wrap ap2">
+                <svg viewBox="0 0 68 78" fill="none"><ellipse cx="34" cy="22" rx="14" ry="16" fill="#f0c898"/><path d="M20 18 Q22 8 34 8 Q46 8 48 18 Q46 10 34 10 Q22 10 20 18Z" fill="#1a0a00"/><rect x="28" y="36" width="12" height="10" rx="6" fill="#f0c898"/><path d="M8 78 C8 56 18 46 34 44 C50 46 60 56 60 78Z" fill="#5080c0"/><path d="M60 58 Q66 50 62 42 Q54 48 50 60Z" fill="#6090d0"/></svg>
               </div>
+              <div class="astro-card-name">Kamakshi</div>
+              <div class="astro-card-meta"><span class="astro-free">Free</span><span class="astro-sep">|</span><span class="astro-exp">Exp: 7Yrs</span></div>
+              <button class="astro-action-btn chat-btn" onclick="startConsult('kamakshi','chat')">Chat</button>
             </div>
             <div class="astro-card">
-              <div class="astro-photo">
-                <div class="astro-avatar"></div>
-                <div class="astro-btn chat">💬 Chat</div>
+              <div class="astro-photo-wrap ap3">
+                <svg viewBox="0 0 68 78" fill="none"><ellipse cx="34" cy="22" rx="14" ry="16" fill="#f4d0b8"/><path d="M20 16 Q24 6 34 6 Q44 6 48 16 Q44 8 34 8 Q24 8 20 16Z" fill="#3a1a08"/><rect x="28" y="36" width="12" height="10" rx="6" fill="#f4d0b8"/><path d="M8 78 C8 56 18 46 34 44 C50 46 60 56 60 78Z" fill="#cc3070"/><path d="M8 58 Q2 50 6 42 Q14 48 18 60Z" fill="#dd4080"/></svg>
               </div>
+              <div class="astro-card-name">Urva</div>
+              <div class="astro-card-meta"><span class="astro-free">Free</span><span class="astro-sep">|</span><span class="astro-exp">Exp: 5Yrs</span></div>
+              <button class="astro-action-btn chat-btn" onclick="startConsult('urva','chat')">Chat</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call with our Astrologers (separate section — matches live app) -->
+        <div class="section" style="padding-bottom:16px;">
+          <div class="section-header">
+            <span class="section-title" style="font-size:17px;">Call with our Astrologers</span>
+            <span class="view-all" onclick="onNavClick('consultant')">View All ›</span>
+          </div>
+          <div class="astro-row">
+            <div class="astro-card">
+              <div class="astro-photo-wrap ap4">
+                <svg viewBox="0 0 68 78" fill="none"><ellipse cx="34" cy="22" rx="14" ry="16" fill="#e8a068"/><path d="M20 18 Q20 6 34 6 Q48 6 48 18 Q46 8 34 8 Q22 8 20 18Z" fill="#1e0e04"/><rect x="28" y="36" width="12" height="10" rx="6" fill="#e8a068"/><path d="M8 78 C8 56 18 46 34 44 C50 46 60 56 60 78Z" fill="#7a3fd6"/><path d="M60 58 Q66 50 62 42 Q54 48 50 60Z" fill="#8a4fe0"/></svg>
+              </div>
+              <div class="astro-card-name">Kalpana</div>
+              <div class="astro-card-meta"><span class="astro-free">Free</span><span class="astro-sep">|</span><span class="astro-exp">Exp: 13Yrs</span></div>
+              <button class="astro-action-btn call-btn" onclick="startConsult('kalpana','call')">Call</button>
+            </div>
+            <div class="astro-card">
+              <div class="astro-photo-wrap ap5">
+                <svg viewBox="0 0 68 78" fill="none"><ellipse cx="34" cy="22" rx="14" ry="16" fill="#ecc8a8"/><path d="M20 16 Q22 6 34 6 Q46 6 48 16 Q46 8 34 8 Q22 8 20 16Z" fill="#2a1206"/><rect x="28" y="36" width="12" height="10" rx="6" fill="#ecc8a8"/><path d="M8 78 C8 56 18 46 34 44 C50 46 60 56 60 78Z" fill="#9a4f20"/><path d="M8 58 Q2 50 6 42 Q14 48 18 60Z" fill="#aa5f30"/></svg>
+              </div>
+              <div class="astro-card-name">Raha</div>
+              <div class="astro-card-meta"><span class="astro-free">Free</span><span class="astro-sep">|</span><span class="astro-exp">Exp: 6Yrs</span></div>
+              <button class="astro-action-btn call-btn" onclick="startConsult('raha','call')">Call</button>
+            </div>
+            <div class="astro-card">
+              <div class="astro-photo-wrap ap6">
+                <svg viewBox="0 0 68 78" fill="none"><ellipse cx="34" cy="22" rx="14" ry="16" fill="#f0d8c8"/><path d="M20 16 Q24 4 34 4 Q44 4 48 16 Q44 6 34 6 Q24 6 20 16Z" fill="#3a2010"/><rect x="28" y="36" width="12" height="10" rx="6" fill="#f0d8c8"/><path d="M8 78 C8 56 18 46 34 44 C50 46 60 56 60 78Z" fill="#4060a0"/><path d="M60 58 Q66 50 62 42 Q54 48 50 60Z" fill="#5070b0"/></svg>
+              </div>
+              <div class="astro-card-name">Misha</div>
+              <div class="astro-card-meta"><span class="astro-free">Free</span><span class="astro-sep">|</span><span class="astro-exp">Exp: 9Yrs</span></div>
+              <button class="astro-action-btn call-btn" onclick="startConsult('misha','call')">Call</button>
             </div>
           </div>
         </div>
@@ -882,6 +292,10 @@
       <div id="storeView" class="store-view" style="display:none;">
         <div class="section-header">
           <span class="section-title">Astro Store</span>
+          <span class="store-cart-btn" onclick="navigateTo('cart')" id="storeCartBtn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M7 8V6a5 5 0 0 1 10 0v2h3l-1.5 11a1 1 0 0 1-1 .88H6.5a1 1 0 0 1-1-.88L4 8h3zm2 0h6V6a3 3 0 0 0-6 0v2z"/></svg>
+            <span class="store-cart-badge" id="storeCartBadge">0</span>
+          </span>
         </div>
 
         <div class="store-tabs" id="storeTabs">
@@ -921,6 +335,71 @@
           </div>
         </div>
       </div><!-- /storeView -->
+
+      <!-- ============ MENU ============ -->
+      <div id="menuView" class="menu-view" style="display:none;">
+        <div class="menu-profile">
+          <div class="menu-avatar"></div>
+          <div>
+            <div class="menu-profile-name">Aarav Sharma</div>
+            <div class="menu-profile-sub">Wallet · ₹250</div>
+          </div>
+        </div>
+        <div class="menu-list">
+          <div class="menu-row" onclick="goToStoreTab('forYou')">
+            <span class="menu-row-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8h12l-1 13H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+            </span>
+            <span class="menu-row-label">Astro Store</span>
+            <span class="menu-row-chev">›</span>
+          </div>
+          <div class="menu-row" onclick="navigateTo('cart')">
+            <span class="menu-row-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.2 11h10.3L20 8H7"/></svg>
+            </span>
+            <span class="menu-row-label">My orders</span>
+            <span class="menu-row-chev">›</span>
+          </div>
+          <div class="menu-row" onclick="openMyReadings()">
+            <span class="menu-row-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h11a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V6a2 2 0 0 1 2-2z"/></svg>
+            </span>
+            <span class="menu-row-label">My Readings</span>
+            <span class="menu-row-chev">›</span>
+          </div>
+          <div class="menu-row" onclick="showToast('Wallet — coming soon')">
+            <span class="menu-row-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </span>
+            <span class="menu-row-label">Wallet</span>
+            <span class="menu-row-chev">›</span>
+          </div>
+        </div>
+      </div><!-- /menuView -->
+
+      <!-- ============ S11: MY READINGS LIST ============ -->
+      <div id="readingsListView" style="display:none;">
+        <div class="readings-header">
+          <button class="readings-back" onclick="resetTo(['menu'])">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span class="readings-title">My Readings</span>
+        </div>
+        <div class="readings-sub">Your saved consultations and recaps</div>
+        <div id="readingsList" class="readings-list"></div>
+      </div><!-- /readingsListView -->
+
+      <!-- ============ S12: READING DETAIL ============ -->
+      <div id="readingDetailView" style="display:none;">
+        <div class="readings-header">
+          <button class="readings-back" onclick="goBack()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span class="readings-title">Reading detail</span>
+        </div>
+        <div class="reading-detail-scroll" id="readingDetailBody"></div>
+        <div class="reading-detail-footer" id="readingDetailFooter"></div>
+      </div><!-- /readingDetailView -->
 
       <!-- ============ PRODUCT DETAIL ============ -->
       <div id="productView" style="display:none;">
@@ -1228,28 +707,399 @@
         </div>
       </div><!-- /searchView -->
 
+      <!-- ============ S6: READING SHEET ============ -->
+      <div id="readingView" style="display:none;">
+
+        <!-- Sub-header -->
+        <div class="rs-header">
+          <button class="rs-back" onclick="goBack()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="rs-header-info">
+            <span class="rs-header-name" id="rsAstrologerName">Astrologer</span>
+            <span class="rs-header-channel" id="rsChannelLabel">Chat</span>
+          </div>
+          <div class="rs-header-avatar" id="rsAstrologerAvatar"></div>
+        </div>
+
+        <!-- Who for? -->
+        <div class="rs-section">
+          <div class="rs-label">Who is this reading for?</div>
+          <div class="rs-whofor-row">
+            <button class="rs-whofor-btn selected" data-who="me"    onclick="selectWhoFor('me')">Me</button>
+            <button class="rs-whofor-btn"          data-who="partner" onclick="selectWhoFor('partner')">Partner</button>
+            <button class="rs-whofor-btn"          data-who="both"  onclick="selectWhoFor('both')">Both ✨</button>
+          </div>
+        </div>
+
+        <!-- Kundli card (self) -->
+        <div class="rs-section">
+          <div class="rs-label">Your details</div>
+          <div class="rs-kundli-card">
+            <div class="rs-kundli-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7a1fd6" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <div class="rs-kundli-details">
+              <div class="rs-kundli-name">Aarav Sharma</div>
+              <div class="rs-kundli-dob">15 Mar 1992 · 06:30 AM · Jaipur, Rajasthan</div>
+            </div>
+            <span class="rs-kundli-badge">Me</span>
+          </div>
+        </div>
+
+        <!-- Partner kundli card (shown for Partner / Both) -->
+        <div class="rs-section" id="rsPartnerSection" style="display:none;">
+          <div class="rs-label">Partner's details</div>
+          <div class="rs-kundli-card rs-kundli-partner" onclick="selectPartnerKundli()">
+            <div class="rs-kundli-icon" style="background:rgba(255,120,170,0.12);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e05090" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <div class="rs-kundli-details" id="rsPartnerDetails">
+              <div class="rs-kundli-name" style="color:#9a9ab0;">Tap to pick a saved kundli</div>
+              <div class="rs-kundli-dob" style="color:#c0b8d8;">Partner's birth details</div>
+            </div>
+            <span class="rs-kundli-badge" id="rsPartnerBadge" style="background:#e05090;">Partner</span>
+          </div>
+          <!-- Saved kundli picker (dropdown) -->
+          <div class="rs-kundli-picker" id="rsKundliPicker" style="display:none;">
+            <div class="rs-picker-item" id="rsPickerDiya" onclick="pickPartner('diya')">
+              <span class="rs-picker-name">Diya Sharma</span>
+              <span class="rs-picker-dob">22 Jun 1994 · 10:15 AM · Mumbai</span>
+            </div>
+            <div class="rs-picker-item rs-picker-add" onclick="showAddKundliForm()">
+              <span class="rs-picker-name" style="color:var(--purple);">+ Add new Kundli</span>
+            </div>
+          </div>
+
+          <!-- Add new Kundli inline form -->
+          <div class="rs-add-kundli-form" id="rsAddKundliForm" style="display:none;">
+            <div class="rs-add-form-title">Add Partner's Kundli</div>
+            <input class="rs-add-input" id="akName"  type="text"  placeholder="Full name" />
+            <input class="rs-add-input" id="akDob"   type="text"  placeholder="Date of birth (e.g. 10 Apr 1995)" />
+            <input class="rs-add-input" id="akTob"   type="text"  placeholder="Time of birth (e.g. 08:30 AM)" />
+            <input class="rs-add-input" id="akPob"   type="text"  placeholder="Place of birth (e.g. Delhi)" />
+            <div class="rs-add-form-row">
+              <button class="rs-add-cancel" onclick="hideAddKundliForm()">Cancel</button>
+              <button class="rs-add-save"   onclick="saveNewKundli()">Save &amp; Use</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic chips -->
+        <div class="rs-section">
+          <div class="rs-label">What would you like to discuss? <span class="rs-required">*</span></div>
+          <div class="rs-chips" id="rsTopicChips">
+            <button class="rs-chip" data-topic="career" onclick="selectTopic('career')">💼 Career</button>
+            <button class="rs-chip" data-topic="love" onclick="selectTopic('love')">❤️ Love</button>
+            <button class="rs-chip" data-topic="family" onclick="selectTopic('family')">🏠 Family</button>
+            <button class="rs-chip" data-topic="health" onclick="selectTopic('health')">🌿 Health</button>
+            <button class="rs-chip" data-topic="money" onclick="selectTopic('money')">💰 Money</button>
+            <button class="rs-chip" data-topic="spiritual" onclick="selectTopic('spiritual')">🪷 Spiritual</button>
+          </div>
+        </div>
+
+        <!-- One-line question -->
+        <div class="rs-section">
+          <div class="rs-label">Your question <span class="rs-optional">(optional)</span></div>
+          <textarea class="rs-textarea" id="rsNote" rows="2" placeholder="e.g. Will I get a promotion this year?"></textarea>
+        </div>
+
+        <!-- Recap opt-in -->
+        <div class="rs-section">
+          <div class="rs-recap-toggle" id="rsRecapToggle" onclick="toggleRecapOptIn()">
+            <div class="rs-recap-text">
+              <div class="rs-recap-title">Save a recap after this session</div>
+              <div class="rs-recap-sub">5 key insights + remedies · ₹49 · charged only if you choose at end</div>
+            </div>
+            <div class="rs-toggle-track" id="rsToggleTrack">
+              <div class="rs-toggle-thumb" id="rsToggleThumb"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Continue CTA -->
+        <div class="rs-cta-wrap">
+          <button class="rs-cta" id="rsCta" onclick="confirmReadingSheet()" disabled>
+            Continue →
+          </button>
+          <div class="rs-cta-hint" id="rsCtaHint">Select a topic to continue</div>
+        </div>
+
+      </div><!-- /readingView -->
+
+      <!-- ============ S6b: BRIEFING SCREEN ============ -->
+      <div id="briefingView" style="display:none;">
+
+        <div class="bf-wrap">
+          <!-- Astrologer avatar -->
+          <div class="bf-avatar-ring">
+            <div class="bf-avatar" id="bfAvatar"></div>
+          </div>
+          <div class="bf-astro-name" id="bfAstrologerName">Astrologer</div>
+
+          <!-- Status badge -->
+          <div class="bf-status-badge">
+            <span class="bf-dot"></span> Not charging yet
+          </div>
+
+          <!-- Message -->
+          <div class="bf-message">
+            <div class="bf-msg-title" id="bfMsgTitle">Going through your chart…</div>
+            <div class="bf-msg-sub">The astrologer is reviewing your details before the session begins. You are <strong>not being charged</strong> during this time.</div>
+          </div>
+
+          <!-- Kundli snapshot card -->
+          <div class="bf-card" id="bfCard">
+            <div class="bf-card-row">
+              <span class="bf-card-label">Name</span>
+              <span class="bf-card-val" id="bfName">—</span>
+            </div>
+            <div class="bf-card-row">
+              <span class="bf-card-label">DOB</span>
+              <span class="bf-card-val" id="bfDob">—</span>
+            </div>
+            <div class="bf-card-row">
+              <span class="bf-card-label">Topic</span>
+              <span class="bf-card-val" id="bfTopic">—</span>
+            </div>
+            <div class="bf-card-row">
+              <span class="bf-card-label">Question</span>
+              <span class="bf-card-val" id="bfNote">—</span>
+            </div>
+          </div>
+
+          <!-- Progress bar -->
+          <div class="bf-progress-wrap">
+            <div class="bf-progress-bar" id="bfProgressBar"></div>
+          </div>
+          <div class="bf-progress-label" id="bfProgressLabel">Reviewing chart…</div>
+
+          <!-- Start button (shown after auto-advance or skip) -->
+          <button class="bf-start-btn" id="bfStartBtn" style="display:none;" onclick="startSession()">
+            Start Session →
+          </button>
+        </div>
+
+      </div><!-- /briefingView -->
+
+      <!-- ============ S8: PARTNER INVITE / JOIN ============ -->
+      <div id="inviteView" style="display:none;">
+        <div class="rs-header">
+          <button class="rs-back" onclick="goBack()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="rs-header-info">
+            <span class="rs-header-name">Invite Partner</span>
+            <span class="rs-header-channel">Join this session</span>
+          </div>
+        </div>
+
+        <div class="inv-wrap">
+          <div class="inv-icon">💌</div>
+          <div class="inv-title">Share this session with your partner</div>
+          <div class="inv-sub">Your partner will join as a viewer. Their chart will be pinned alongside yours for the astrologer.</div>
+
+          <div class="inv-card" id="invCard">
+            <div class="inv-card-row">
+              <span class="inv-card-label">Session with</span>
+              <span class="inv-card-val" id="invAstrologer">—</span>
+            </div>
+            <div class="inv-card-row">
+              <span class="inv-card-label">Topic</span>
+              <span class="inv-card-val" id="invTopic">—</span>
+            </div>
+            <div class="inv-card-row">
+              <span class="inv-card-label">Seeker</span>
+              <span class="inv-card-val">Aarav Sharma + Diya Sharma</span>
+            </div>
+          </div>
+
+          <div class="inv-link-wrap">
+            <div class="inv-link" id="invLink">astrolive.app/join/SF2024XXXX</div>
+            <button class="inv-copy-btn" onclick="copyInviteLink()">Copy link</button>
+          </div>
+
+          <div class="inv-hint">In this prototype the partner has already joined via the saved kundli.</div>
+
+          <button class="rs-cta" style="margin-top:8px;" onclick="proceedToBriefing()">Continue to briefing →</button>
+        </div>
+      </div><!-- /inviteView -->
+
+      <!-- ============ S9: CHAT (meter on) ============ -->
+      <div id="chatView" style="display:none;">
+
+        <!-- Chat header -->
+        <div class="chat-header">
+          <button class="rs-back" onclick="endSession()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="chat-header-info">
+            <span class="chat-header-name" id="chatAstroName">Astrologer</span>
+            <span class="chat-header-status">
+              <span class="chat-online-dot"></span> Session live · <span id="chatMeter">₹0</span>
+            </span>
+          </div>
+          <div class="chat-header-avatar" id="chatAstroAvatar"></div>
+          <button class="chat-astro-view-btn" onclick="navigateTo('astrologerView')" title="View as astrologer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg>
+          </button>
+        </div>
+
+        <!-- Pinned reading card (S9 pin) -->
+        <div class="chat-pin" id="chatPin">
+          <div class="chat-pin-label">📋 Reading</div>
+          <div class="chat-pin-body" id="chatPinBody">—</div>
+        </div>
+
+        <!-- Chat messages -->
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <!-- Sticky footer -->
+        <div class="chat-footer">
+          <div class="chat-input-bar">
+            <input class="chat-input" id="chatInput" type="text" placeholder="Type a message…" onkeydown="if(event.key==='Enter') sendChatMessage()">
+            <button class="chat-send-btn" onclick="sendChatMessage()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+            </button>
+          </div>
+          <div class="chat-end-wrap">
+            <button class="chat-end-btn" onclick="endSession()">End Session</button>
+          </div>
+        </div>
+
+      </div><!-- /chatView -->
+
+      <!-- ============ S10: ASTROLOGER VIEW ============ -->
+      <div id="astrologerView" style="display:none;">
+
+        <div class="chat-header" style="background:#1e1040;">
+          <button class="rs-back" onclick="goBack()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="chat-header-info">
+            <span class="chat-header-name">Astrologer View</span>
+            <span class="chat-header-status"><span class="chat-online-dot"></span> Meter on</span>
+          </div>
+          <span style="font-size:11px;color:rgba(255,255,255,0.6);padding-right:4px;">S10</span>
+        </div>
+
+        <!-- Pinned card — same data -->
+        <div class="chat-pin" id="astroPinWrap" style="background:#2a1460;">
+          <div class="chat-pin-label" style="color:rgba(255,255,255,0.6);">📋 Session File</div>
+          <div class="chat-pin-body" id="astroPinBody" style="color:#e8d8ff;">—</div>
+        </div>
+
+        <div class="astro-view-note">
+          <span>You are viewing the <strong>astrologer's perspective</strong>. The pinned card above is what the astrologer sees — both charts, topic, and question.</span>
+        </div>
+
+        <!-- Mirror of chat messages -->
+        <div class="chat-messages" id="astroMessages" style="background:#100828; flex:1;"></div>
+
+        <div class="chat-footer" style="background:#100828; border-top-color:#2a1460; box-shadow:none;">
+          <div class="chat-end-wrap" style="background:#100828; padding-top:10px;">
+            <button class="chat-end-btn" onclick="endSession()">End Session</button>
+          </div>
+        </div>
+
+      </div><!-- /astrologerView -->
+
+      <!-- ============ S9c: RECAP CARD ============ -->
+      <div id="recapView" style="display:none;">
+
+        <div class="recap-header">
+          <div class="recap-header-title">Your Reading Recap</div>
+          <div class="recap-paid-badge" id="recapPaidBadge">✨ Saved</div>
+        </div>
+
+        <div class="recap-body">
+
+          <!-- Who + astrologer -->
+          <div class="recap-meta" id="recapMeta"></div>
+
+          <!-- 5 bullets -->
+          <div class="recap-section-title">Key Insights</div>
+          <div class="recap-bullets" id="recapBullets"></div>
+
+          <!-- Remedies -->
+          <div class="recap-section-title">Recommended Remedies</div>
+          <div class="recap-remedies" id="recapRemedies"></div>
+
+          <!-- Actions -->
+          <div class="recap-actions">
+            <button class="recap-shop-btn" id="recapShopBtn" onclick="shopThisTopic()">
+              <span class="recap-btn-icon" aria-hidden="true">🛍️</span>
+              <span id="recapShopBtnText">Shop this topic</span>
+            </button>
+            <button class="recap-rebook-btn" id="recapRebookBtn" onclick="rebookSession()">
+              <span class="recap-btn-icon" aria-hidden="true">↻</span>
+              <span id="recapRebookBtnText">Book again</span>
+            </button>
+          </div>
+
+          <div class="recap-footer">Recap saved to My Readings · ₹49 charged</div>
+
+        </div>
+
+      </div><!-- /recapView -->
+
+      <!-- ============ CONSULTANT ============ -->
+      <div id="consultantView" style="display:none;">
+        <div class="cons-header">
+          <span class="cons-title">Consultants</span>
+          <span class="cons-sub">Choose an astrologer to begin your reading</span>
+        </div>
+        <div id="consultantList" class="cons-list"></div>
+      </div><!-- /consultantView -->
+
     </div><!-- /appBody -->
+
+    <!-- Sticky Chat / Call pill (home only) -->
+    <div class="sticky-pill" id="stickyPill">
+      <button class="pill-chat" onclick="resetTo(['consultant'])">
+        <span class="pill-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        Chat
+      </button>
+      <button class="pill-call" onclick="resetTo(['consultant'])">
+        <span class="pill-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 3.1 4.18 2 2 0 0 1 5.09 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.71 2.81a2 2 0 0 1-.45 2.11L9.91 9.09a16 16 0 0 0 6 6l.45-.45a2 2 0 0 1 2.11-.45c.91.35 1.85.58 2.81.71A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        Call
+      </button>
+    </div>
 
     <!-- Bottom nav -->
     <div class="bottom-nav" id="bottomNav">
       <div class="nav-item active" data-nav="home" onclick="onNavClick('home')">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+        </span>
         <span>Home</span>
       </div>
       <div class="nav-item" data-nav="live" onclick="onNavClick('live')">
-        <span class="nav-icon">📺</span>
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
+        </span>
         <span>Live</span>
       </div>
       <div class="nav-item" data-nav="hub" onclick="onNavClick('hub')">
-        <span class="nav-icon">🕉️</span>
-        <span>Astro Hub</span>
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(0)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>
+        </span>
+        <span>AstroHub</span>
       </div>
       <div class="nav-item" data-nav="consultant" onclick="onNavClick('consultant')">
-        <span class="nav-icon">💬</span>
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.39 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 3.1 4.18 2 2 0 0 1 5.09 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.71 2.81a2 2 0 0 1-.45 2.11L9.91 9.09a16 16 0 0 0 6 6l.45-.45a2 2 0 0 1 2.11-.45c.91.35 1.85.58 2.81.71A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
         <span>Consultant</span>
       </div>
       <div class="nav-item" data-nav="menu" onclick="onNavClick('menu')">
-        <span class="nav-icon menu">P</span>
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </span>
         <span>Menu</span>
       </div>
     </div>
@@ -1260,784 +1110,9 @@
   </div>
 </div>
 
-<script>
-  /* =========================================================
-     DATA MODEL
-  ========================================================= */
-  const PRODUCTS = [
-    {
-      id:'rudraksh', name:'5 Mukhi Rudraksh Mala', category:'Rudraksh & Mala', intention:'career',
-      imgClass:'rudraksh', emoji:'📿', badge:'-25%', price:899, oldPrice:1199, rating:4.8, reviews:234, isBestSeller:true,
-      recommendedReason:'Recommended based on your recent consultation for career stability, focus and removing obstacles.',
-      benefits:['Enhances concentration &amp; focus','Promotes mental peace','Supports career growth','Adjustable thread, suitable for daily wear'],
-      description:'This sacred 5 Mukhi Rudraksh Mala is sourced from the Himalayan region and traditionally worn to support focus, calm and steady career growth. Each bead is checked for authenticity before dispatch.',
-      offers:['Bank Offer: 10% off on HDFC Credit Cards, up to ₹150','No cost EMI on orders above ₹999','Buy 2 get a free astro consultation'],
-      reviewBars:[70,20,6,2,2]
-    },
-    {
-      id:'yantra', name:'Career Yantra', category:'Yantra', intention:'career',
-      imgClass:'yantra', emoji:'🔯', badge:null, price:1199, oldPrice:1649, rating:4.7, reviews:156, isBestSeller:true,
-      recommendedReason:'Suggested for seekers focusing on career growth and removing professional obstacles.',
-      benefits:['Pure brass, hand-engraved','Energized as per Vedic ritual','Traditionally supports career clarity','Compact size for desk or altar'],
-      description:'A traditional brass Career Yantra, energized as per Vedic practice. Placed on your work desk or home temple, it is traditionally used to invite clarity, discipline and forward momentum in your career.',
-      offers:['No cost EMI on orders above ₹999','Free puja muhurat consultation with purchase'],
-      reviewBars:[85,10,3,1,1]
-    },
-    {
-      id:'tigereye', name:'Tiger Eye Bracelet', category:'Bracelet', intention:'career',
-      imgClass:'tigereye', emoji:'📿', badge:null, price:749, oldPrice:899, rating:4.6, reviews:98, isBestSeller:false,
-      recommendedReason:null,
-      benefits:['Natural tiger eye gemstone beads','Traditionally linked to confidence &amp; willpower','Elastic fit, one size fits most','Comes in a gift pouch'],
-      description:'Tiger Eye is traditionally worn for grounding and confidence. This hand-strung bracelet uses natural stones and is finished with a durable elastic cord for everyday wear.',
-      offers:['Flat ₹50 off on first order','Free gift wrap included'],
-      reviewBars:[60,25,9,4,2]
-    },
-    {
-      id:'ring', name:'Blue Sapphire Ring (Neelam)', category:'Ring', intention:'career',
-      imgClass:'ring', emoji:'💍', badge:'-20%', price:1999, oldPrice:2499, rating:4.8, reviews:210, isBestSeller:true,
-      recommendedReason:'Popular among seekers exploring remedies for career stability and material progress.',
-      benefits:['Natural certified gemstone','Astrologer-recommended setting','Available in adjustable sizes','Lab certificate included'],
-      description:'A certified Blue Sapphire (Neelam) set in a silver-tone astrological ring. Neelam is traditionally associated with discipline, ambition and material progress when worn as advised by an astrologer.',
-      offers:['Bank Offer: 5% cashback on Astro Wallet','No cost EMI available','Free gemstone energization on request'],
-      reviewBars:[80,14,4,1,1]
-    },
-    {
-      id:'amethyst', name:'Amethyst Bracelet', category:'Bracelet', intention:'peace',
-      imgClass:'amethyst', emoji:'📿', badge:'New', price:649, oldPrice:null, rating:4.5, reviews:120, isBestSeller:false,
-      recommendedReason:null,
-      benefits:['Natural amethyst crystal beads','Traditionally associated with calm &amp; clarity','Elastic fit, one size fits most','Comes in a gift pouch'],
-      description:'A calming amethyst crystal bracelet, traditionally associated with clarity and inner peace. Lightweight and comfortable for daily wear or meditation.',
-      offers:['Flat ₹50 off on first order','Free gift wrap included'],
-      reviewBars:[60,25,9,4,2]
-    },
-    {
-      id:'citrine', name:'Citrine Bracelet', category:'Bracelet', intention:'wealth',
-      imgClass:'citrine', emoji:'📿', badge:null, price:399, oldPrice:null, rating:4.4, reviews:80, isBestSeller:false,
-      recommendedReason:null,
-      benefits:['Natural citrine gemstone chips','Traditionally associated with abundance','Elastic fit, one size fits most','Lightweight, everyday wear'],
-      description:"Citrine is traditionally referred to as the merchant's stone, associated with abundance and positivity. A light, everyday bracelet crafted from natural citrine chips.",
-      offers:['Bank Offer: 5% cashback on Astro Wallet'],
-      reviewBars:[55,28,10,4,3]
-    },
-    {
-      id:'mala', name:'Rose Quartz Mala', category:'Rudraksh & Mala', intention:'love',
-      imgClass:'mala', emoji:'📿', badge:'-15%', price:749, oldPrice:899, rating:4.4, reviews:140, isBestSeller:false,
-      recommendedReason:null,
-      benefits:['Natural rose quartz beads, 108+1 count','Traditionally associated with love &amp; harmony','Hand-knotted, durable thread','Suitable for japa meditation'],
-      description:'A hand-knotted 108 bead mala made from natural rose quartz, traditionally known as the stone of love and harmony. Ideal for meditation, japa practice or as a delicate everyday accessory.',
-      offers:['Bank Offer: 5% cashback on Astro Wallet','Buy 2 get free astro consultation'],
-      reviewBars:[68,21,7,2,2]
-    },
-    {
-      id:'pendant', name:'Evil Eye Pendant', category:'Pendant', intention:'protection',
-      imgClass:'pendant', emoji:'🔱', badge:null, price:399, oldPrice:549, rating:4.5, reviews:874, isBestSeller:false,
-      recommendedReason:null,
-      benefits:['Handmade protection pendant','Comes with adjustable chain','Traditionally wards off negative energy','Lightweight, everyday wear'],
-      description:'A handmade Evil Eye pendant, traditionally worn for protection from negative energy. Comes with an adjustable chain, suitable for everyday wear.',
-      offers:['Bank Offer: 10% off on HDFC Credit Cards, up to ₹150','Buy 1 Get 1 on select pendants'],
-      reviewBars:[65,22,8,3,2]
-    }
-  ];
-
-  const FOLLOWUP_SERVICE = {
-    id:'followup-consult', name:'Follow-up Consultation', emoji:'🔮', price:299, rating:4.8, reviews:410
-  };
-
-  /* Intention banners — shown below the section title when Categories → an
-     intention is selected. Same centralized-mapping pattern as PRODUCT_ASSETS. */
-  const BANNER_ASSETS = {
-    career: 'asset/banners/career-success-banner.png',
-    love: 'asset/banners/love-relationships-banner.png',
-    wealth: 'asset/banners/wealth-prosperity-banner.png',
-    peace: 'asset/banners/peace-wellness-banner.png',
-    protection: 'asset/banners/protection-removal-banner.png',
-    planetary: 'asset/banners/planetary-remedies-banner.png'
-  };
-
-  const INTENTIONS = [
-    {id:'love', label:'Love & Relationships', emoji:'❤️'},
-    {id:'career', label:'Career & Success', emoji:'💼'},
-    {id:'wealth', label:'Wealth & Prosperity', emoji:'💰'},
-    {id:'peace', label:'Peace & Wellness', emoji:'🪷'},
-    {id:'planetary', label:'Planetary Remedies', emoji:'🪐'},
-    {id:'protection', label:'Protection & Removal', emoji:'🛡️'}
-  ];
-
-  function findProduct(id){ return PRODUCTS.find(p => p.id === id); }
-  function money(n){ return '₹' + n.toLocaleString('en-IN'); }
-
-  /* =========================================================
-     PRODUCT IMAGE ASSETS
-     Centralized path mapping — every card/detail/cart/search
-     view below resolves through productImageSrc()/productImgTag()
-     so a future asset swap only needs to change this block.
-  ========================================================= */
-  const PRODUCT_ASSETS = {
-    rudraksh: 'asset/product/rudraksh-mala.png',
-    yantra: 'asset/product/career-yantra.png',
-    tigereye: 'asset/product/tiger-eye-bracelet.png',
-    ring: 'asset/product/blue-sapphire-ring.png',
-    amethyst: 'asset/product/amethyst-bracelet.png',
-    citrine: 'asset/product/citrine-bracelet.png',
-    mala: 'asset/product/rose-quartz-mala.png',
-    pendant: 'asset/product/evil-eye-pendant.png'
-  };
-  const PRODUCT_IMAGE_FALLBACK = 'asset/product/placeholder-fallback.svg';
-
-  function productImageSrc(id){ return PRODUCT_ASSETS[id] || PRODUCT_IMAGE_FALLBACK; }
-
-  function productImgTag(product, extraClass){
-    const cls = 'product-thumb-img' + (extraClass ? ' ' + extraClass : '');
-    return `<img class="${cls}" src="${productImageSrc(product.id)}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='${PRODUCT_IMAGE_FALLBACK}';">`;
-  }
-
-  /* =========================================================
-     APP STATE
-  ========================================================= */
-  const state = {
-    cart: JSON.parse(localStorage.getItem('astrolive_cart') || '[]'),
-    storeTab: 'forYou',
-    selectedIntention: 'career',
-    selectedPayment: 'upi',
-    selectedProductId: null,
-    feedback: null,
-    lastOrder: null
-  };
-
-  function saveCart(){ localStorage.setItem('astrolive_cart', JSON.stringify(state.cart)); }
-
-  /* =========================================================
-     NAVIGATION / ROUTER
-  ========================================================= */
-  let screenStack = ['home'];
-  function currentScreen(){ return screenStack[screenStack.length - 1]; }
-
-  function navigateTo(id){
-    if(id === currentScreen()) return;
-    screenStack.push(id);
-    renderScreen();
-  }
-  function goBack(){
-    if(screenStack.length > 1){ screenStack.pop(); renderScreen(); }
-  }
-  function resetTo(stack){
-    screenStack = stack;
-    renderScreen();
-  }
-
-  const VIEW_IDS = ['homeView','storeView','productView','cartView','checkoutView','confirmationView','journeyView','retentionView','searchView'];
-  const appHeader = document.getElementById('appHeader');
-  const bottomNav = document.getElementById('bottomNav');
-  const appBody = document.getElementById('appBody');
-  const toggleSlider = document.getElementById('toggleSlider');
-
-  function renderScreen(){
-    const id = currentScreen();
-    VIEW_IDS.forEach(v => { document.getElementById(v).style.display = 'none'; });
-
-    if(id === 'home' || id === 'store'){
-      appHeader.style.display = '';
-      bottomNav.style.display = '';
-      appBody.classList.remove('compact-open');
-      toggleSlider.classList.remove('home','store');
-      toggleSlider.classList.add(id);
-      document.getElementById(id === 'home' ? 'homeView' : 'storeView').style.display = id === 'home' ? '' : 'block';
-      if(id === 'store') renderStore();
-      setBottomNavActive('home');
-    } else {
-      appHeader.style.display = 'none';
-      bottomNav.style.display = 'none';
-      appBody.classList.add('compact-open');
-      const map = { product:'productView', cart:'cartView', checkout:'checkoutView', confirmation:'confirmationView', journey:'journeyView', retention:'retentionView', search:'searchView' };
-      document.getElementById(map[id]).style.display = 'block';
-      if(id === 'product') renderProductDetail();
-      if(id === 'cart') renderCart();
-      if(id === 'checkout') renderCheckout();
-      if(id === 'journey') renderJourney();
-      if(id === 'retention') renderRetention();
-      if(id === 'search') { document.getElementById('searchInput').value=''; renderSearchResults(''); }
-    }
-    appBody.scrollTop = 0;
-  }
-
-  function setBottomNavActive(navId){
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === navId));
-  }
-
-  function onNavClick(navId){
-    if(navId === 'home'){ resetTo(['home']); return; }
-    showToast('Coming soon in the full app');
-  }
-
-  toggleSlider.addEventListener('click', () => {
-    const target = toggleSlider.classList.contains('store') ? 'home' : 'store';
-    screenStack[screenStack.length - 1] = target;
-    renderScreen();
-  });
-
-  function goToStoreTab(tab){
-    state.storeTab = tab;
-    resetTo(['home','store']);
-  }
-
-  /* =========================================================
-     TOAST
-  ========================================================= */
-  let toastTimer;
-  function showToast(msg){
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
-  }
-
-  /* =========================================================
-     CART LOGIC
-  ========================================================= */
-  function cartCount(){ return state.cart.reduce((s,i) => s + i.qty, 0); }
-  function cartLineTotal(){
-    return state.cart.reduce((sum,item) => {
-      const p = findProduct(item.id);
-      return p ? sum + p.price * item.qty : sum;
-    }, 0);
-  }
-  function cartOldLineTotal(){
-    return state.cart.reduce((sum,item) => {
-      const p = findProduct(item.id);
-      if(!p) return sum;
-      return sum + (p.oldPrice || p.price) * item.qty;
-    }, 0);
-  }
-
-  function updateCartBadge(){
-    const count = cartCount();
-    ['cartBadge','cartBadgePdp'].forEach(id => {
-      const el = document.getElementById(id);
-      if(!el) return;
-      el.textContent = count;
-      el.classList.toggle('show', count > 0);
-    });
-  }
-
-  function addToCart(id, qty){
-    qty = qty || 1;
-    const existing = state.cart.find(i => i.id === id);
-    if(existing) existing.qty += qty;
-    else state.cart.push({ id, qty });
-    saveCart();
-    updateCartBadge();
-    const p = findProduct(id);
-    showToast((p ? p.name : 'Item') + ' added to cart');
-    if(currentScreen() === 'cart') renderCart();
-  }
-
-  function removeFromCart(id){
-    state.cart = state.cart.filter(i => i.id !== id);
-    saveCart();
-    updateCartBadge();
-    renderCart();
-  }
-
-  function changeQty(id, delta){
-    const item = state.cart.find(i => i.id === id);
-    if(!item) return;
-    item.qty += delta;
-    if(item.qty <= 0){ state.cart = state.cart.filter(i => i.id !== id); }
-    saveCart();
-    updateCartBadge();
-    renderCart();
-  }
-
-  /* =========================================================
-     HOME — RECOMMENDED FOR YOU
-  ========================================================= */
-  function renderRecommended(){
-    const ids = ['rudraksh','yantra'];
-    const row = document.getElementById('recoRow');
-    let html = '';
-    ids.forEach(id => {
-      const p = findProduct(id);
-      html += `
-        <div class="reco-card" onclick="openProduct('${p.id}')">
-          <div class="reco-img ${p.imgClass}">${productImgTag(p)}</div>
-          <div class="reco-info">
-            <div class="reco-name">${p.name}</div>
-            <div class="reco-price-row">
-              <span class="reco-price">${money(p.price)}</span>
-              ${p.oldPrice ? `<span class="reco-old-price">${money(p.oldPrice)}</span>` : ''}
-            </div>
-            <div class="reco-rating">★ ${p.rating}</div>
-            <button class="reco-btn" onclick="event.stopPropagation();addToCart('${p.id}',1);">Add</button>
-          </div>
-        </div>`;
-    });
-    html += `
-      <div class="reco-card" onclick="navigateTo('retention')">
-        <div class="reco-img" style="background:radial-gradient(circle at 50% 40%,#c9a8ff,#6a2fd6);">${FOLLOWUP_SERVICE.emoji}</div>
-        <div class="reco-info">
-          <div class="reco-name">${FOLLOWUP_SERVICE.name}</div>
-          <div class="reco-price-row"><span class="reco-price">${money(FOLLOWUP_SERVICE.price)}</span></div>
-          <div class="reco-rating">★ ${FOLLOWUP_SERVICE.rating}</div>
-          <button class="reco-btn" onclick="event.stopPropagation();showToast('Consultation request sent to your astrologer');">Book</button>
-        </div>
-      </div>`;
-    row.innerHTML = html;
-  }
-  renderRecommended();
-
-  /* =========================================================
-     STORE
-  ========================================================= */
-  function renderIntentions(){
-    const row = document.getElementById('intentionRow');
-    row.innerHTML = INTENTIONS.map(it => `
-      <div class="intention-chip ${state.selectedIntention === it.id ? 'active' : ''}" onclick="selectIntention('${it.id}')">
-        <div class="emo">${it.emoji}</div>
-        <div class="lbl">${it.label}</div>
-      </div>
-    `).join('');
-  }
-
-  function selectIntention(id){
-    state.selectedIntention = id;
-    state.storeTab = 'categories';
-    renderStore();
-  }
-
-  function selectStoreTab(tab){
-    state.storeTab = tab;
-    renderStore();
-  }
-
-  const FOR_YOU_IDS = ['rudraksh','yantra'];
-
-  function getStoreProducts(){
-    if(state.storeTab === 'forYou') return FOR_YOU_IDS.map(findProduct);
-    if(state.storeTab === 'bestSellers') return PRODUCTS.filter(p => p.isBestSeller).sort((a,b) => b.rating - a.rating);
-    return PRODUCTS.filter(p => p.intention === state.selectedIntention);
-  }
-
-  function getStoreTitle(){
-    if(state.storeTab === 'forYou') return 'Recommended for You';
-    if(state.storeTab === 'bestSellers') return 'Best Sellers';
-    const intent = INTENTIONS.find(i => i.id === state.selectedIntention);
-    return intent ? intent.label : 'All Products';
-  }
-
-  function getStoreSubtitle(){
-    if(state.storeTab === 'forYou') return 'Based on your recent consultation';
-    if(state.storeTab === 'bestSellers') return 'Loved by AstroLive seekers';
-    return '';
-  }
-
-  function renderServiceCard(){
-    return `
-      <div class="product-card" onclick="navigateTo('retention')">
-        <div class="product-img" style="background:radial-gradient(circle at 50% 40%,#c9a8ff,#6a2fd6);">
-          ${FOLLOWUP_SERVICE.emoji}
-        </div>
-        <div class="product-info">
-          <div class="product-name">${FOLLOWUP_SERVICE.name}</div>
-          <div class="product-meta">
-            <span class="product-price">${money(FOLLOWUP_SERVICE.price)}</span>
-          </div>
-          <div class="product-rating">★ ${FOLLOWUP_SERVICE.rating} (${FOLLOWUP_SERVICE.reviews})</div>
-          <button class="add-cart-btn" onclick="event.stopPropagation();showToast('Consultation request sent to your astrologer');">Book</button>
-        </div>
-      </div>`;
-  }
-
-  function renderProductCard(p){
-    return `
-      <div class="product-card" onclick="openProduct('${p.id}')">
-        <div class="product-img ${p.imgClass}">
-          ${productImgTag(p)}
-          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
-          ${p.isBestSeller ? `<span class="bestseller-badge">BESTSELLER</span>` : ''}
-        </div>
-        <div class="product-info">
-          <div class="product-name">${p.name}</div>
-          <div class="product-meta">
-            <span class="product-price">${money(p.price)}</span>
-            ${p.oldPrice ? `<span class="product-old-price">${money(p.oldPrice)}</span>` : ''}
-          </div>
-          <div class="product-rating">★ ${p.rating} (${p.reviews})</div>
-          <button class="add-cart-btn" onclick="event.stopPropagation();addToCart('${p.id}',1);">🛒 Add</button>
-        </div>
-      </div>`;
-  }
-
-  function renderStore(){
-    document.querySelectorAll('.store-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === state.storeTab));
-    renderIntentions();
-    document.getElementById('storeGridTitle').textContent = getStoreTitle();
-
-    const subtitleEl = document.getElementById('storeGridSubtitle');
-    const subtitle = getStoreSubtitle();
-    subtitleEl.textContent = subtitle;
-    subtitleEl.style.display = subtitle ? 'block' : 'none';
-
-    const bannerEl = document.getElementById('intentionBanner');
-    const bannerSrc = state.storeTab === 'categories' ? BANNER_ASSETS[state.selectedIntention] : null;
-    if(bannerSrc){
-      bannerEl.src = bannerSrc;
-      bannerEl.alt = getStoreTitle() + ' banner';
-      bannerEl.style.display = 'block';
-    } else {
-      bannerEl.style.display = 'none';
-    }
-
-    const list = getStoreProducts();
-    const grid = document.getElementById('storeGrid');
-    let cardsHtml = list.map(renderProductCard).join('');
-    if(state.storeTab === 'forYou') cardsHtml += renderServiceCard();
-    grid.innerHTML = list.length
-      ? cardsHtml
-      : `<div class="store-empty">More remedies coming soon for this category. 🙏</div>`;
-  }
-
-  document.getElementById('storeTabs').addEventListener('click', (e) => {
-    const tab = e.target.closest('.store-tab');
-    if(tab) selectStoreTab(tab.dataset.tab);
-  });
-
-  /* =========================================================
-     PRODUCT DETAIL
-  ========================================================= */
-  function openProduct(id){
-    state.selectedProductId = id;
-    navigateTo('product');
-  }
-
-  function renderProductDetail(){
-    const p = findProduct(state.selectedProductId);
-    if(!p) return;
-
-    const pdpImageEl = document.getElementById('pdpImage');
-    pdpImageEl.src = productImageSrc(p.id);
-    pdpImageEl.alt = p.name;
-    const gallery = document.getElementById('pdpGallery');
-    gallery.className = 'pdp-gallery ' + p.imgClass;
-    const badgeEl = document.getElementById('pdpBadgeLg');
-    if(p.badge){ badgeEl.textContent = p.badge; badgeEl.style.display = 'block'; }
-    else { badgeEl.style.display = 'none'; }
-
-    document.getElementById('pdpCategory').textContent = p.category;
-    document.getElementById('pdpTitle').textContent = p.name;
-    document.getElementById('pdpRating').textContent = p.rating;
-    document.getElementById('pdpRatingCount').textContent = '(' + p.reviews.toLocaleString('en-IN') + ' reviews)';
-    document.getElementById('pdpPrice').textContent = money(p.price);
-
-    const oldPriceEl = document.getElementById('pdpOldPrice');
-    const discountEl = document.getElementById('pdpDiscount');
-    if(p.oldPrice){
-      oldPriceEl.textContent = money(p.oldPrice);
-      oldPriceEl.style.display = 'inline';
-      const pct = Math.round((1 - p.price / p.oldPrice) * 100);
-      discountEl.textContent = pct + '% OFF';
-      discountEl.style.display = 'inline';
-    } else {
-      oldPriceEl.style.display = 'none';
-      oldPriceEl.textContent = '';
-      discountEl.style.display = 'none';
-      discountEl.textContent = '';
-    }
-
-    const reasonEl = document.getElementById('pdpReason');
-    if(p.recommendedReason){
-      document.getElementById('pdpReasonText').textContent = p.recommendedReason;
-      reasonEl.style.display = 'flex';
-    } else {
-      reasonEl.style.display = 'none';
-    }
-
-    document.getElementById('pdpHighlights').innerHTML = p.benefits.map(h => `<li>${h}</li>`).join('');
-    document.getElementById('pdpOffers').innerHTML = p.offers.map(o => `<div class="pdp-offer"><span class="tag">🏷️</span><span>${o}</span></div>`).join('');
-    document.getElementById('pdpDescription').textContent = p.description;
-
-    document.getElementById('pdpReviewNum').textContent = p.rating;
-    document.getElementById('pdpReviewCount').textContent = p.reviews.toLocaleString('en-IN') + ' reviews';
-    document.getElementById('pdpReviewBars').innerHTML = p.reviewBars
-      .map((pct, i) => `<div class="pdp-bar-row"><span>${5 - i}★</span><div class="pdp-bar"><div style="width:${pct}%"></div></div></div>`).join('');
-
-    document.getElementById('pdpDeliveryDate').textContent = formatDate(addDays(new Date(), 3));
-    updateCartBadge();
-  }
-
-  function checkPincode(){
-    const val = (document.getElementById('pdpPincodeInput').value || '').trim();
-    if(/^\d{6}$/.test(val)){
-      showToast('Delivery available to this pincode');
-    } else {
-      showToast('Enter a valid 6-digit pincode');
-    }
-  }
-
-  function addToCartFromPdp(){
-    if(state.selectedProductId) addToCart(state.selectedProductId, 1);
-  }
-  function buyNowFromPdp(){
-    if(!state.selectedProductId) return;
-    addToCart(state.selectedProductId, 1);
-    navigateTo('checkout');
-  }
-
-  /* =========================================================
-     CART SCREEN
-  ========================================================= */
-  function renderCart(){
-    document.getElementById('cartHeaderTitle').textContent = 'My Cart (' + cartCount() + ')';
-    const body = document.getElementById('cartBody');
-
-    if(state.cart.length === 0){
-      body.innerHTML = `
-        <div class="cart-empty">
-          <div class="big">🛒</div>
-          <div>Your cart is empty.</div>
-          <button class="cta" onclick="goToStoreTab('forYou')">Browse Store</button>
-        </div>`;
-      return;
-    }
-
-    let itemsHtml = state.cart.map(item => {
-      const p = findProduct(item.id);
-      if(!p) return '';
-      return `
-        <div class="cart-item">
-          <div class="cart-thumb ${p.imgClass}">${productImgTag(p)}</div>
-          <div class="cart-item-info">
-            <div class="cart-item-name">${p.name}</div>
-            <div class="cart-item-price">${money(p.price)}</div>
-          </div>
-          <div class="cart-item-right">
-            <button class="cart-remove" onclick="removeFromCart('${p.id}')">✕</button>
-            <div class="qty-stepper">
-              <button onclick="changeQty('${p.id}',-1)">−</button>
-              <span class="qty-num">${item.qty}</span>
-              <button onclick="changeQty('${p.id}',1)">+</button>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
-
-    const inCartIds = state.cart.map(i => i.id);
-    const recoProducts = PRODUCTS.filter(p => !inCartIds.includes(p.id)).slice(0,2);
-    const recoHtml = recoProducts.map(p => `
-      <div class="cart-reco-card">
-        <div class="cart-reco-img ${p.imgClass}">${productImgTag(p)}</div>
-        <div class="cart-reco-name">${p.name}</div>
-        <div class="cart-reco-price">${money(p.price)}</div>
-        <button class="cart-reco-add" onclick="addToCart('${p.id}',1)">+ Add</button>
-      </div>
-    `).join('');
-
-    const subtotal = cartLineTotal();
-    const oldSubtotal = cartOldLineTotal();
-    const discount = Math.max(0, oldSubtotal - subtotal);
-    const total = subtotal;
-
-    body.innerHTML = `
-      ${itemsHtml}
-      ${recoProducts.length ? `
-        <div class="section-title" style="font-size:14.5px;margin:18px 0 10px;">You may also like</div>
-        <div class="cart-reco-row">${recoHtml}</div>
-      ` : ''}
-      <div class="cart-summary">
-        <div class="summary-row"><span>Subtotal</span><span>${money(subtotal)}</span></div>
-        <div class="summary-row"><span>Discount</span><span class="discount">${discount > 0 ? '-' + money(discount) : '₹0'}</span></div>
-        <div class="summary-row"><span>Shipping</span><span class="free">FREE</span></div>
-        <div class="summary-row total"><span>Total</span><span>${money(total)}</span></div>
-        <button class="checkout-btn" onclick="navigateTo('checkout')">Proceed to Checkout</button>
-      </div>
-    `;
-  }
-
-  /* =========================================================
-     CHECKOUT
-  ========================================================= */
-  const PAYMENT_METHODS = [
-    { id:'upi', icon:'📱', label:'UPI', sub:'GPay, PhonePe, Paytm & more' },
-    { id:'card', icon:'💳', label:'Card', sub:'Visa, Mastercard, RuPay' },
-    { id:'netbanking', icon:'🏦', label:'Net Banking', sub:'All major banks' },
-    { id:'cod', icon:'💵', label:'Cash on Delivery', sub:'Pay when it arrives' }
-  ];
-
-  function renderPaymentOptions(){
-    const wrap = document.getElementById('paymentOptions');
-    wrap.innerHTML = PAYMENT_METHODS.map(m => `
-      <div class="payment-option ${state.selectedPayment === m.id ? 'selected' : ''}" onclick="selectPayment('${m.id}')">
-        <div class="radio-dot"></div>
-        <div class="payment-icon">${m.icon}</div>
-        <div>
-          <div class="payment-label">${m.label}</div>
-          <div class="payment-sub">${m.sub}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-  function selectPayment(id){
-    state.selectedPayment = id;
-    renderPaymentOptions();
-  }
-
-  function renderCheckout(){
-    const isEmpty = state.cart.length === 0;
-    document.getElementById('checkoutEmpty').style.display = isEmpty ? 'block' : 'none';
-    document.getElementById('checkoutContent').style.display = isEmpty ? 'none' : 'block';
-    if(isEmpty) return;
-
-    renderPaymentOptions();
-    const subtotal = cartLineTotal();
-    const oldSubtotal = cartOldLineTotal();
-    const discount = Math.max(0, oldSubtotal - subtotal);
-    const total = subtotal;
-    document.getElementById('checkoutSummary').innerHTML = `
-      <div class="summary-row"><span>Total Items</span><span>${cartCount()}</span></div>
-      <div class="summary-row"><span>Subtotal</span><span>${money(subtotal)}</span></div>
-      <div class="summary-row"><span>Discount</span><span class="discount">${discount > 0 ? '-' + money(discount) : '₹0'}</span></div>
-      <div class="summary-row"><span>Shipping</span><span class="free">FREE</span></div>
-      <div class="summary-row total"><span>Total</span><span>${money(total)}</span></div>
-    `;
-  }
-
-  function placeOrder(){
-    if(state.cart.length === 0){ showToast('Your cart is empty'); return; }
-    const orderId = 'ALive' + Math.floor(100000 + Math.random() * 900000);
-    const orderDate = new Date();
-    const deliveryDate = addDays(orderDate, 3);
-    const firstProduct = findProduct(state.cart[0].id);
-
-    state.lastOrder = {
-      id: orderId,
-      date: orderDate,
-      deliveryDate: deliveryDate,
-      total: cartLineTotal(),
-      items: JSON.parse(JSON.stringify(state.cart)),
-      productName: firstProduct ? firstProduct.name : 'your AstroLive product'
-    };
-
-    state.cart = [];
-    saveCart();
-    updateCartBadge();
-    resetTo(['home','confirmation']);
-  }
-
-  function goToJourneyFromConfirmation(){
-    resetTo(['home','journey']);
-  }
-
-  /* =========================================================
-     CONFIRMATION
-  ========================================================= */
-  function renderConfirmation(){
-    const o = state.lastOrder;
-    if(!o) return;
-    document.getElementById('confOrderId').textContent = o.id;
-    document.getElementById('confOrderDate').textContent = formatDate(o.date, true);
-    document.getElementById('confOrderTotal').textContent = money(o.total);
-    document.getElementById('confDeliveryDate').textContent = formatDate(o.deliveryDate);
-  }
-
-  /* =========================================================
-     ASTRO JOURNEY
-  ========================================================= */
-  function renderJourney(){
-    const o = state.lastOrder;
-    const productName = o ? o.productName : '5 Mukhi Rudraksh Mala';
-    const orderId = o ? o.id : 'ALive482913';
-    document.getElementById('journeyProductName').textContent = productName;
-    document.getElementById('journeyOrderId').textContent = orderId;
-  }
-
-  /* =========================================================
-     RETENTION / FOLLOW-UP
-  ========================================================= */
-  function renderRetention(){
-    const o = state.lastOrder;
-    document.getElementById('feedbackProductQ').textContent =
-      'How is your experience with ' + (o ? o.productName : 'your recent AstroLive purchase') + '?';
-    document.querySelectorAll('.feedback-opt').forEach(el => el.classList.toggle('selected', el.dataset.val === state.feedback));
-    document.getElementById('feedbackThanks').classList.toggle('show', !!state.feedback);
-  }
-  function selectFeedback(val){
-    state.feedback = val;
-    renderRetention();
-  }
-
-  /* =========================================================
-     SEARCH
-  ========================================================= */
-  function openSearch(){ navigateTo('search'); }
-
-  function renderSearchResults(query){
-    const q = query.trim().toLowerCase();
-    const hint = document.getElementById('searchHint');
-    const results = document.getElementById('searchResults');
-
-    if(!q){
-      hint.style.display = 'block';
-      results.innerHTML = '';
-      return;
-    }
-    hint.style.display = 'none';
-
-    const matches = PRODUCTS.filter(p => {
-      const intentLabel = (INTENTIONS.find(i => i.id === p.intention) || {}).label || '';
-      const haystack = (p.name + ' ' + p.category + ' ' + p.intention + ' ' + intentLabel).toLowerCase();
-      return haystack.includes(q);
-    });
-
-    results.innerHTML = matches.length
-      ? matches.map(p => `
-          <div class="search-result-row" onclick="openProduct('${p.id}')">
-            <div class="search-thumb ${p.imgClass}">${productImgTag(p)}</div>
-            <div>
-              <div class="search-result-name">${p.name}</div>
-              <div class="search-result-cat">${p.category}</div>
-            </div>
-            <div class="search-result-price">${money(p.price)}</div>
-          </div>
-        `).join('')
-      : `<div class="store-empty">No products found for "${query}"</div>`;
-  }
-
-  /* =========================================================
-     DATE HELPERS
-  ========================================================= */
-  function addDays(date, days){
-    const d = new Date(date);
-    d.setDate(d.getDate() + days);
-    return d;
-  }
-  function formatDate(date, withTime){
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let str = date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
-    if(withTime){
-      let h = date.getHours(), m = date.getMinutes();
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12 || 12;
-      str += ', ' + h + ':' + String(m).padStart(2,'0') + ' ' + ampm;
-    } else {
-      str = days[date.getDay()] + ', ' + str;
-    }
-    return str;
-  }
-
-  /* Patch renderScreen to also cover confirmation render (needs order data already set before display) */
-  const _origRenderScreen = renderScreen;
-  renderScreen = function(){
-    _origRenderScreen();
-    if(currentScreen() === 'confirmation') renderConfirmation();
-  };
-
-  /* =========================================================
-     INIT
-  ========================================================= */
-  updateCartBadge();
-  renderScreen();
-</script>
-
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/session.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
