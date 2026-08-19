@@ -1,6 +1,7 @@
 # Phase 0 Audit — `index.html` vs AstroLive mobile app
 
-**Date:** 19 Aug 2026  
+**Date:** 19 Aug 2026 (audit) · **Chrome update:** header **wallet** replaced the notification bell in later build.
+
 **Reference:** Live Android/iOS app (not astrolive.app website)
 
 ---
@@ -66,4 +67,8 @@
 
 ---
 
-**Phase 0 complete.** Prototype is now judged as the AstroLive app, not a commerce demo. Ready for Phase 1 (CSS/JS extraction).
+**Phase 0 complete.** Prototype was judged as the AstroLive app, not a commerce demo.
+
+### Current chrome (later than this audit)
+
+Phases 1–6 shipped. Header utility is now **wallet** (not bell). Consultant, chat, recap, My Readings, and in-app Store are live. See [architecture.md](./architecture.md) “As shipped”.

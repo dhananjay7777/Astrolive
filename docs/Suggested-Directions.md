@@ -2,7 +2,7 @@
 
 **Hackathon:** [AstroHack 2026: Build the Next Universe (AstroLive)](https://unstop.com/competitions/astrohack-2026-build-the-next-universe-astrolive-1719172)  
 **App today:** [Play Store](https://play.google.com/store/apps/details?id=app.astrolive&hl=en_IN) · [App Store](https://apps.apple.com/in/app/astrolive-talk-to-astrologer/id6484162351)  
-**Screen plan:** [architecture.md](./architecture.md) · **Logic (no server):** [backendlogic.md](./backendlogic.md) · **Build:** [implementation.md](./implementation.md)
+**Screen plan:** [architecture.md](./architecture.md) · **Logic (no server):** [backendlogic.md](./backendlogic.md) · **Build:** [implementation.md](./implementation.md) · **Flows:** [userflow-and-system-design.md](./userflow-and-system-design.md) · **Live:** [https://dhananjay7777.github.io/Astrolive/](https://dhananjay7777.github.io/Astrolive/)
 
 ---
 
@@ -32,6 +32,16 @@ This is the **product freeze** for our hackathon prototype. It answers three que
 **Rule:** keep the mechanic, drop the AI. Scripted screens are fine. We do **not** build real call recording or speech-to-text in this prototype.
 
 **Locked set:** **1 hero + 1 supporting + Store (given).**
+
+### As shipped in this prototype
+
+Not a second product — polish on the locked set:
+
+- Topics include **Not sure — let the astrologer guide** (valid Continue; recap is an open reading; shop is **Shop remedies**).
+- Recap header: **Home** (session already ended). Badge `Saved · ₹49` / `Free preview`. Shop label **Shop for {topic}** without emojis.
+- Store Shop by Intention: **Love, Career, Wealth, Peace** only. Chips filter in place; drag-to-scroll on laptop. Banners on For You + Categories.
+- My Readings is **demo-seeded** on first visit. Header utility is **wallet**, not bell.
+- Persistence: `astrolive_readings`, `astrolive_cart`.
 
 | Layer | Name | Say this to a judge? |
 |-------|------|----------------------|
@@ -140,7 +150,7 @@ Without **in**, a recap is a random note next to chat **history**. Without **out
 2. Continue → **briefing** (charts visible, “not charged yet,” Start session). Short proof. Not the climax.
 3. Short chat, **both charts pinned**.
 4. End → **paid recap** (names whose charts were on the reading). **Pause here.**
-5. Menu → My Readings → that recap → Book again / Shop this topic.
+5. Menu → My Readings → that recap → Book again / Shop for Love.
 6. Optional 5 seconds: same flow with **Me** + Career, so it is not a couples-only product.
 
 **Never say in the video:** Session File, packet, CRM, “we persist a JSON.”
@@ -274,7 +284,7 @@ Chip: **3 days / 1 week / 1 month**. Prototype does **not** send a push. Shows a
 
 **Where it lives.** Same app shell. **No sixth bottom tab.** Home | Store in the header, header bag, Home card, Menu → Astro Store. Cart from the bag when already in Store. Home tab returns to consult Home.
 
-**What it is.** Scripted shop (no real pay): For You / Categories / Best Sellers; shop by intention; product; cart; fake checkout.
+**What it is.** Scripted shop (no real pay): For You / Categories / Best Sellers; shop by intention (**Love, Career, Wealth, Peace**); product; cart; fake checkout. Intention chips stay on the current tab. Banners on For You and Categories.
 
 **Thin join to the hero.** **For You** reads the **last reading’s topic**. Recap and My Readings may show **Shop this topic**. Do not rebuild a remedies marketplace.
 
@@ -295,7 +305,7 @@ A seeker taps Chat. They start **a Reading**: Who for? **Both** (or Me), topic, 
 ## How they sit in the current app
 
 ```
-Header:  ASTROLIVE · Home | Store · search · bag · bell
+Header:  ASTROLIVE · Home | Store · search · bag · wallet
 Tabs:    Home · Live · Hub · Consultant · Menu   (still 5)
 
 Header Home | Store → Home consult vs Store home (ST1)
@@ -303,7 +313,7 @@ Home / bag / Menu → Store (GIVEN)
 
 Consultant or Home → Chat / Call
   → Who is this for? Me / Partner / Both     HERO IN  (demo opens here)
-  → topic + one-line question + recap opt-in
+  → topic (or Not sure) + one-line question + recap opt-in
   → Briefing (meter OFF, chart(s) visible)   HERO chrome (not a loader)
   → chat, card PINNED, meter ON
   → Recap card                               HERO OUT / climax
@@ -333,7 +343,7 @@ Consultant or Home → Chat / Call
 | Chat → Who for? (lead with Both) → recap opt-in | Briefing: sees **whose** charts, meter off |
 | Briefing: “not charged yet” | Taps **Start session** |
 | Chat/call, card pinned | Does not hunt the first bubble; does not ask a second DOB on the clock |
-| Recap → My Readings → Book again | May suggest 3d / 1w / 1m |
+| Recap → Home or Shop for {topic} → My Readings → Book again | May suggest 3d / 1w / 1m |
 | Store For You / Shop this topic | May point to a remedy; we do not require in-chat selling |
 
 ---
@@ -357,13 +367,13 @@ Same AstroLive app — including Store, as required — but **this consult is a 
 
 ## Submission checklist
 
-- [ ] Prototype **looks like** current AstroLive (5 tabs; Store in-app, not a 6th tab)
-- [ ] Honest vs live app: we do **not** claim intake is missing; we **do** claim you still book alone and walk out with nothing
-- [ ] Pitch **never** leads with “Session File”; it leads with **The Reading**
-- [ ] Hero **in:** Who is this for? Me / Partner / Both + invite into *this* session; card pinned; **unmetered briefing** (not a blank loader)
-- [ ] Demo **opens on Both** (Love), not on Name/DOB; 5-second Me/Career so it is not couples-only
-- [ ] Hero **out:** paid recap card (scripted; no real recording/STT)
-- [ ] Demo **pauses on the recap**; does **not** open on the shop
-- [ ] Supporting: Menu → My Readings shows the recap + Book again + day-scale follow-up
-- [ ] **Store in the app:** browse, PDP, cart, checkout; For You / Shop this topic tied to last reading topic
+- [x] Prototype **looks like** current AstroLive (5 tabs; Store in-app, not a 6th tab)
+- [x] Honest vs live app: we do **not** claim intake is missing; we **do** claim you still book alone and walk out with nothing
+- [x] Pitch **never** leads with “Session File”; it leads with **The Reading**
+- [x] Hero **in:** Who is this for? Me / Partner / Both + invite into *this* session; card pinned; **unmetered briefing** (not a blank loader)
+- [x] Demo **opens on Both** (Love), not on Name/DOB; 5-second Me/Career so it is not couples-only
+- [x] Hero **out:** paid recap card (scripted; no real recording/STT); Home on recap; Shop for {topic}
+- [x] Demo **pauses on the recap**; does **not** open on the shop
+- [x] Supporting: Menu → My Readings shows the recap + Book again + day-scale follow-up (demo-seeded)
+- [x] **Store in the app:** browse, PDP, cart, checkout; For You / Shop for {topic} tied to last reading topic
 - [ ] Links public; report ≥ 8 pages; cite sources and AI

@@ -8,7 +8,9 @@
 
 Do phases in order. Phase 0 = audit vs live **phone app**. No `fetch`, no bundler unless the team already uses one.
 
-## **Pitch reminder (do not implement the opposite):** Demo **opens** on Who for? **Both**. **Pauses** on the recap. Store is a **last tap** (Shop this topic / For You). Never say “Session File” in the video. `SessionFile` is the object in `js/session.js`.
+## **Pitch reminder (do not implement the opposite):** Demo **opens** on Who for? **Both**. **Pauses** on the recap. Store is a **last tap** (Shop for Love / Shop remedies). Recap **Home** returns to consult Home — do not Back into ended chat. Never say “Session File” in the video. `SessionFile` is the object in `js/session.js`.
+
+**Public URL:** [https://dhananjay7777.github.io/Astrolive/](https://dhananjay7777.github.io/Astrolive/) · **Deploy:** [deploy.md](./deploy.md)
 
 
 
@@ -20,10 +22,10 @@ Do phases in order. Phase 0 = audit vs live **phone app**. No `fetch`, no bundle
 | 0     | **Audit**                      | Check the prototype looks and feels like the live AstroLive phone app — correct tabs, header, Home layout, purple style. Fix gaps before adding anything new.                                       | ✅     |
 | 1     | **Shell + Store**              | Wire the Astro Store inside the app (header toggle, bag, Home card, Menu). Browse products, add to cart, fake checkout, cart survives refresh. Consult Home stays first.                            | ✅     |
 | 2     | **Consultant list**            | Show a seeded list of astrologers. Tapping Chat or Call picks that astrologer and opens the Reading sheet.                                                                                          | ✅     |
-| 3     | **Reading sheet + briefing**   | Before the meter: topic chip, one-line question, recap opt-in. Then a short briefing screen — chart(s) visible, "not being charged yet" — before chat opens.                                        | ✅     |
-| 4     | **Hero IN — Who for?**         | Add Me / Partner / Both to the sheet. Pick a saved partner kundli or send a scripted invite into *this* session. Both charts show on the pinned card.                                               | ✅     |
-| 5     | **Hero live + recap + shop**   | Chat with the reading card pinned. After ending, show the paid recap (5 scripted bullets, who it was for, remedies). “Shop this topic” opens Store filtered by reading topic. **Demo pauses here.** | ✅     |
-| 6     | **My Readings**                | Menu → list of past readings with the recap on each row. Book again (same astrologer, same sheet prefilled including Who for?). Optional 3d / 1w / 1m follow-up chip.                               | ✅     |
+| 3     | **Reading sheet + briefing**   | Topic chips (incl. **Not sure**), one-line question, recap opt-in. Then briefing — chart(s) visible, "not being charged yet" — before chat opens.                                        | ✅     |
+| 4     | **Hero IN — Who for?**         | Add Me / Partner / Both to the sheet. Pick a saved partner kundli or **Add new Kundli**, or send a scripted invite. Both charts show on the pinned card.                                               | ✅     |
+| 5     | **Hero live + recap + shop**   | Chat with the reading card pinned. After ending: recap (Home, Shop for {topic} / Shop remedies, Book again). **Demo pauses here.** | ✅     |
+| 6     | **My Readings**                | Menu → list (demo-seeded if empty). Recap on each row. Book again prefilled. Follow-up 3d / 1w / 1m.                               | ✅     |
 | 7     | **Second Opinion** *(stretch)* | Hand the same reading to a second astrologer at a reduced rate; static agree / differ comparison. Only if 0–6 are solid.                                                                            | ⬜     |
 
 
@@ -36,7 +38,7 @@ Do phases in order. Phase 0 = audit vs live **phone app**. No `fetch`, no bundle
 ```
 index.html       markup only
 css/app.css      all styles
-js/data.js       PRODUCTS, recap seeds by topic
+js/data.js       PRODUCTS, recap seeds by topic, READING_SEEDS, 4 INTENTIONS
 js/store.js      reserved (cart/PDP still in app.js)
 js/session.js    startConsult, confirmSession, startSession, saveRecap, rebook
 js/app.js        navigateTo, Home | Store, wire buttons
@@ -75,7 +77,7 @@ Save 3–5 in-app shots (Home, Consultant, chat, Menu) for the report. Chat shot
 | Area                 | Live **app**                                    | Action                                                 |
 | -------------------- | ----------------------------------------------- | ------------------------------------------------------ |
 | **Bottom tabs**      | Home · Live · Astro Hub · Consultant · Menu (5) | Must match. Store is **not** a 6th bottom tab.         |
-| **Header**           | ASTROLIVE; search; wallet; bell                 | Bag + **Home                                           |
+| **Header**           | ASTROLIVE; search; wallet                         | Bag + **Home \| Store**; wallet (not bell)     |
 | **Home first paint** | Consult / live / astrologers                    | Must look like **app Home**, not web Home              |
 | **Chat start**       | Intake bubble (Name, DOB, TOC…)                 | Upgrade later (pin + Who for?); do not “invent intake” |
 | **Store**            | Not a main app tab today                        | In-app shop screens, **not** the desktop shop          |
@@ -87,7 +89,7 @@ Save 3–5 in-app shots (Home, Consultant, chat, Menu) for the report. Chat shot
 ### Allowed differences (intentional)
 
 - Store in-app (header Store / bag / Home card / Menu)
-- **The Reading:** Who for?, briefing, pin, recap, Shop this topic
+- **The Reading:** Who for?, briefing, pin, recap, Shop for {topic}
 - My Readings
 - Phone mock on a URL; scripted chat
 
@@ -189,8 +191,8 @@ Who for? may default **Me** until Phase 4.
 | `S9` pin: whoFor, chart name(s), topic, question — meter on                         | Live audio/video                             |
 | `S10` same pin; “View as astrologer”                                                | Wallet meter                                 |
 | 3–5 scripted bubbles; End → `endSession`                                            | RAG / real STT                               |
-| `S9c` recap: who + 5 scripted bullets + remedies + Book again + **Shop this topic** | Recap as a cut of ₹/min                      |
-| Paid badge; opt-in was on `S6`                                                      | Force a purchase                             |
+| `S9c` recap: who + 5 bullets + remedies + **Home** + Shop for {topic} / Shop remedies + Book again | Recap as a cut of ₹/min                      |
+| Badge: `Saved · ₹49` or `Free preview` (no emoji wrap)                              | Force a purchase                             |
 | `saveRecap` from seeded bullets in `js/data.js`                                     | Fake microphone pipeline                     |
 | Shop this topic + For You + Home recos = `listRecommended(topic)`                   | Make Store the **first** screen of the video |
 
@@ -234,13 +236,22 @@ Only if 0–6 are solid. Skip without guilt.
 ## Demo click path (record this)
 
 1. Home → Chat on an astrologer.
-2. `S6`: topic **Love**, Who for? **Both**, Diya, recap opt-in. (Do not linger on DOB.)
+2. `S6`: topic **Love**, Who for? **Both**, Diya, recap opt-in. (Do not linger on DOB.) Optional: **Not sure** instead of Love.
 3. `S6b` briefing, “not charged yet.”
 4. Short chat, pin shows both names.
-5. **End → recap. Pause.**
-6. Shop this topic → Store For You (career/love filter). Optional Add.
-7. Menu → My Readings → same recap → Book again.
+5. **End → recap. Pause.** Home icon exits to consult Home (not back to chat).
+6. Shop for Love → Store For You (Love banner + products). Optional Add.
+7. Menu → My Readings (seeded list if first visit) → same recap → Book again.
 8. Optional 5s: Me + Career so it is not couples-only.
+
+---
+
+## Store as shipped (Phase 1 + later polish)
+
+- Tabs: For You / Categories / Best Sellers. Intention chips **filter in place** (do not jump to Categories).
+- Chips: Love, Career, Wealth, Peace & Wellness only.
+- Intention banner: For You + Categories. Hidden on Best Sellers.
+- Laptop: **click-and-drag** the chip row to scroll; tap to select (purple border + tint).
 
 ---
 
@@ -263,9 +274,9 @@ After each phase:
 
 ## Suggested git / deploy
 
-- Commit after each phase  
-- Static host: Vercel / GitHub Pages / Netlify  
-- Public URL for Unstop
+- Repo: [github.com/dhananjay7777/Astrolive](https://github.com/dhananjay7777/Astrolive)  
+- Static host: **GitHub Pages** (`main` / root) — see [deploy.md](./deploy.md)  
+- Public URL: [https://dhananjay7777.github.io/Astrolive/](https://dhananjay7777.github.io/Astrolive/)
 
 ---
 

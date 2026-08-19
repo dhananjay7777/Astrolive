@@ -10,7 +10,7 @@ This file is the **end-to-end map**: who does what on which screen, and how the 
 
 ## 1. One-sentence system
 
-A **single-page app** in a phone frame. Tapping Chat/Call creates one **Reading** in memory. The seeker fills Who for? + topic, the astrologer “reads” charts off the meter, chat ends in a **recap**, that recap lands in **My Readings**, and **Shop this topic** opens the in-app Store filtered by that topic.
+A **single-page app** in a phone frame. Tapping Chat/Call creates one **Reading** in memory. The seeker fills Who for? + topic (or **Not sure**), the astrologer “reads” charts off the meter, chat ends in a **recap**, that recap lands in **My Readings**, and **Shop for {topic}** opens the in-app Store filtered by that topic.
 
 No backend. Persistence is `localStorage`. Script load order: `data.js` → `store.js` → `session.js` → `app.js`.
 
@@ -44,8 +44,9 @@ flowchart TD
   D -->|Continue to briefing| E
   E -->|Start Session| F[Chat S9 — meter on]
   F -->|End Session| G[Recap S9c — PAUSE]
-  G -->|Shop this topic| H[Store For You]
-  G -->|Menu| I[My Readings S11]
+  G -->|Shop for topic / Shop remedies| H[Store For You]
+  G -->|Home icon| Home[S1 Home]
+  G -->|Menu path| I[My Readings S11]
   I -->|Open row| J[Reading detail S12]
   J -->|Book again| B
 ```
@@ -57,8 +58,8 @@ flowchart TD
 3. Invite screen (Both only) → Continue to briefing.
 4. Briefing: progress bar, “not charged yet” → **Start Session**.
 5. Chat: pinned card shows both names + topic. Scripted bubbles. Footer stays sticky.
-6. **End Session** → recap (5 bullets + remedies). **Pause the demo here.**
-7. Optional: **Shop this topic** → Store For You (Love banner + products).
+6. **End Session** → recap (5 bullets + remedies). **Pause the demo here.** Recap **Home** returns to consult Home (not Back to chat).
+7. Optional: **Shop for Love** (or **Shop remedies** if topic was Not sure) → Store For You (matching banner + products).
 8. Menu → **My Readings** → same recap → **Book again** (sheet prefilled).
 
 **Variants on the same sheet**
@@ -70,6 +71,8 @@ flowchart TD
 | **Both** | Invite, then briefing | Aarav + Diya |
 
 Call vs Chat only changes the channel label (`📞 Call` / `💬 Chat`). There is no live audio.
+
+**Topic if they do not know:** chip **Not sure — let the astrologer guide**. Continue unlocks. Recap title is **Open reading**. Shop CTA is **Shop remedies** (peace intention).
 
 ---
 
@@ -98,14 +101,14 @@ Entry points
   Header bag (on Store → cart; else → Store)
   Home “Shop remedies” card / Recommended View All
   Menu → Astro Store / My Cart
-  Recap / Detail → Shop this topic
+  Recap / Detail → Shop for {topic} / Shop this topic
 
 ST1 Store home
   Tabs: For You | Categories | Best Sellers
-  Shop by Intention chips (Love, Career, Wealth, …)
-    For You / Best Sellers: chip filters in place (stay on that tab)
-    Categories: chip selects that catalog + banner
-  Banner: For You + Categories (intention image). Hidden on Best Sellers.
+  Shop by Intention chips: Love, Career, Wealth, Peace & Wellness
+    Filter in place on every tab (do not jump to Categories)
+    Laptop: click-and-drag to scroll; tap to select (purple border)
+  Banner: For You + Categories. Hidden on Best Sellers.
 
 ST2 Product detail → Add to cart / Buy now
 ST3 Cart → qty / remove → Checkout
@@ -134,7 +137,7 @@ Five bottom tabs stay: Home · Live · Astro Hub · Consultant · Menu. Store is
 
 | Situation | What the user sees |
 |-----------|-------------------|
-| Continue with no topic | CTA disabled; hint “Select a topic” |
+| Continue with no topic | CTA disabled; hint “Select a topic” (Not sure counts as a topic) |
 | Partner / Both with no kundli | CTA disabled; hint “Pick a partner kundli” |
 | Add kundli with empty name or DOB | Toast; form stays open |
 | Empty cart checkout | Empty state + Browse Store |
@@ -201,7 +204,7 @@ Created by `startConsult(astrologerId, channel)`.
 
 ```text
 id, astrologerId, astrologerName, channel
-topic, note, whoFor
+topic, note, whoFor          // topic includes unsure
 selfSnapshot { name, dob, tob, pob }
 partnerSnapshot | null
 recapOptIn, status
@@ -229,7 +232,7 @@ Order { id, date, total, items, productName }   // in memory after Place Order
 |---------------|-----------------|
 | Career | career |
 | Love | love |
-| Family / Health / Spiritual | peace |
+| Family / Health / Spiritual / **Not sure** | peace |
 | Money | wealth |
 
 ---
@@ -291,6 +294,7 @@ Chat copy is **scripted** (`RECAP_SEEDS[topic].chatBubbles`). There is no LLM, S
 ```text
 selectStoreTab(tab)
 selectIntention(id)     // stays on current tab; filters products
+enableDragScroll(row)   // laptop click-and-drag
 syncForYouIntention()   // last reading’s storeIntention, else career
 getStoreProducts()
   forYou      → up to 2 products for selected intention (+ follow-up service card)
@@ -327,7 +331,7 @@ js/app.js      DOM render + store + toast
 | S6b | Briefing | Continue / invite | Chat |
 | S9 | Chat | Start Session | Recap, astrologer view |
 | S10 | Astrologer view | Toggle on chat | Back to chat |
-| S9c | Recap | End Session | Store, Book again, Home |
+| S9c | Recap | End Session | Store, Book again, **Home** |
 | S11 | My Readings | Menu | Detail |
 | S12 | Reading detail | List row | Store, Book again, list |
 | ST1–ST5 | Store → confirm | Header, recap, menu | Cart / checkout / journey |

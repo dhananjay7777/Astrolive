@@ -86,18 +86,14 @@
     career: 'asset/banners/career-success-banner.png',
     love: 'asset/banners/love-relationships-banner.png',
     wealth: 'asset/banners/wealth-prosperity-banner.png',
-    peace: 'asset/banners/peace-wellness-banner.png',
-    protection: 'asset/banners/protection-removal-banner.png',
-    planetary: 'asset/banners/planetary-remedies-banner.png'
+    peace: 'asset/banners/peace-wellness-banner.png'
   };
 
   const INTENTIONS = [
     {id:'love', label:'Love & Relationships', emoji:'❤️'},
     {id:'career', label:'Career & Success', emoji:'💼'},
     {id:'wealth', label:'Wealth & Prosperity', emoji:'💰'},
-    {id:'peace', label:'Peace & Wellness', emoji:'🪷'},
-    {id:'planetary', label:'Planetary Remedies', emoji:'🪐'},
-    {id:'protection', label:'Protection & Removal', emoji:'🛡️'}
+    {id:'peace', label:'Peace & Wellness', emoji:'🪷'}
   ];
 
   /* =========================================================
@@ -232,6 +228,24 @@
         'A pilgrimage or spiritual retreat between March and May is strongly supported by your transits.',
       ],
       remedies: ['108-bead mala practice at dawn', 'Rose Quartz near your meditation space', 'Light incense and offer water to the rising sun daily'],
+      storeIntention: 'peace'
+    },
+    unsure: {
+      chatBubbles: [
+        { from:'astrologer', text:'That is completely fine — many seekers come in without a single question. I will read what the chart is highlighting first.' },
+        { from:'user',       text:'I just wanted someone to look at the overall picture.' },
+        { from:'astrologer', text:'Saturn is asking for patience in work, Venus is asking for softer conversations at home. We can start with whichever feels louder to you.' },
+        { from:'user',       text:'The home part actually resonates more right now.' },
+        { from:'astrologer', text:'Then we stay there. Keep rose quartz near your bed space this month, and we can go deeper on career next time if you want.' },
+      ],
+      bullets: [
+        'You did not need a topic to start — the chart already shows two loud themes: work pressure and home conversations.',
+        'Saturn transits favour steady effort over big leaps until mid-year; do not force a career move this month.',
+        'Venus energy is asking for reassurance at home — small check-ins matter more than big talks right now.',
+        'This is a good window to name one priority after the session rather than solving everything at once.',
+        'A follow-up in 1–2 weeks can go deep on whichever theme felt strongest today.',
+      ],
+      remedies: ['Keep Rose Quartz near your bed space', 'Light a diya at home entrance every evening', 'Wear Tiger Eye on the right wrist on Sundays'],
       storeIntention: 'peace'
     }
   };

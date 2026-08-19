@@ -4,7 +4,7 @@
 
 **Current prototype:** `../index.html` Home inside an iPhone frame.
 
-**How to read this file:** each item is a change we *can* make. **Rationale** is why it matters for judges (looks like AstroLive) or for users (readability, tap targets, habit). **Do not copy** lists live-app bugs we should *not* reproduce.
+**How to read this file:** historical Home/Store visual brief from early build. **Current chrome:** header is search · bag · **wallet**; Store chips are Love / Career / Wealth / Peace; recap has Home + Shop for {topic}. Product freeze is [Suggested-Directions.md](./Suggested-Directions.md).
 
 **Allowed differences (do not “fix” away):** Store **in the app** (company-given) via Home card + bag icon + Menu — **not** a sixth tab and **not** a header mode switch. Session File / partner / My Readings (our inserts). iPhone frame on a URL. Scripted chat.
 

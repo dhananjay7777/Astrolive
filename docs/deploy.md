@@ -41,8 +41,7 @@ Open a terminal in the project folder:
 ```bash
 cd "d:\IIM Sirmaur\Astrolive"
 
-git add index.html css/ js/ asset/ docs/
-git add .gitignore
+git add index.html css/ js/ asset/ docs/ README.md .gitignore
 
 git commit -m "Prepare AstroLive prototype for GitHub Pages"
 
@@ -110,12 +109,12 @@ GitHub Pages redeploys automatically from `main`. Refresh the live URL after a m
 | `css/app.css` | Styles |
 | `js/*.js` | App logic |
 | `asset/` | Banners & product images |
+| `README.md` `docs/` | GitHub + report briefs |
 
 | Not needed on Pages | Why |
 |---------------------|-----|
 | `node_modules/` | Playwright tests only |
 | `tests/` | Local E2E only |
-| `docs/` | Internal docs (optional to commit) |
 
 ---
 
@@ -133,7 +132,7 @@ GitHub Pages redeploys automatically from `main`. Refresh the live URL after a m
 
 ### “My Readings” is empty on first visit
 
-- Demo readings seed into `localStorage` in the browser. Clear site data or use a private window to see the empty state again.
+- Demo readings seed into `localStorage` (`astrolive_readings`) on first visit. Clear site data or use a private window to see the empty state again.
 
 ### Pages build failed
 

@@ -12,9 +12,24 @@
 **Constraint:** **App interface only** — live AstroLive **phone app**, not the website. Same five **bottom** tabs. **No sixth tab.** Store = header **Home | Store** + bag + Home card + Menu.  
 **Form:** One-page **app mock** (SPA). Unstop URL. No real server.  
 **Rules:** [backendlogic.md](./backendlogic.md)  
-**Build:** [implementation.md](./implementation.md)
+**Build:** [implementation.md](./implementation.md)  
+**Flows:** [userflow-and-system-design.md](./userflow-and-system-design.md)  
+**Live:** [https://dhananjay7777.github.io/Astrolive/](https://dhananjay7777.github.io/Astrolive/)
 
-Reuse the existing store UI. **Do not lead the pitch on Store.** Recap → **Shop this topic** / For You is the funnel join.
+Reuse the existing store UI. **Do not lead the pitch on Store.** Recap → **Shop for {topic}** / For You is the funnel join.
+
+### As shipped (current prototype)
+
+| Area | Current behaviour |
+|------|-------------------|
+| Header | ASTROLIVE · Home \| Store · search · bag · **wallet** (not bell) |
+| Topics on `S6` | Career, Love, Family, Health, Money, Spiritual, **Not sure** |
+| Recap `S9c` | **Home** (not Back) · badge `Saved · ₹49` / `Free preview` · Shop for {topic} or **Shop remedies** |
+| Store chips | Love, Career, Wealth, Peace & Wellness (Planetary / Protection **removed**) |
+| Store banners | For You + Categories; **hidden** on Best Sellers |
+| Intention chips | Filter **in place** on every Store tab; laptop **click-and-drag** to scroll |
+| My Readings | `seedReadingsIfEmpty()` — three demo rows if `astrolive_readings` is empty |
+| Persistence | `astrolive_readings`, `astrolive_cart` (not `astrolive_proto_v1`) |
 
 Build: audit vs live app → shell **including Store** → **The Reading** (in then out) → My Readings. Stretch last.
 
@@ -40,7 +55,7 @@ Build: audit vs live app → shell **including Store** → **The Reading** (in t
 | **Do not** inline all CSS/JS | Store is already large |
 | **Do not** add `chat.html` / `store.html` | Reloads lose the reading + cart |
 | No bundler | `data.js` → `store.js` → `session.js` → `app.js` |
-| No backend | `localStorage` key `astrolive_proto_v1` |
+| No backend | `localStorage`: `astrolive_readings`, `astrolive_cart` |
 
 ---
 
@@ -62,7 +77,7 @@ Build: audit vs live app → shell **including Store** → **The Reading** (in t
 
 ```
 ┌─────────────────────────────────────┐
-│  ASTROLIVE   Home | Store    🔍 👜 🔔 │
+│  ASTROLIVE   Home | Store    🔍 👜 💰 │
 ├─────────────────────────────────────┤
 │  Active screen                      │
 │  Home: consult first; Store card OK │
@@ -92,11 +107,11 @@ Build: audit vs live app → shell **including Store** → **The Reading** (in t
 | `S3` | Astro Hub (stub) | Shell | 1 |
 | `S4` | Consultant list | Shell | 2 |
 | `S5` | Menu | Supporting + Store row | 1 / 6 |
-| `S6` | Reading sheet: Who for? + topic + note + recap opt-in | **Hero IN** | 3 / 4 |
+| `S6` | Reading sheet: Who for? + topic (incl. **Not sure**) + note + recap opt-in | **Hero IN** | 3 / 4 |
 | `S6b` | Briefing (meter off; chart(s) visible) | **Hero chrome** | 3 |
 | `S7`–`S8` | Partner kundli pick / join invite | **Hero IN** | 4 |
 | `S9`–`S10` | Chat + pinned reading (meter on) | **Hero live** | 5 |
-| `S9c` | Recap card (paid, scripted) + Shop this topic | **Hero OUT / climax** | 5 |
+| `S9c` | Recap card (scripted) + Home + Shop / Book again | **Hero OUT / climax** | 5 |
 | `S11`–`S13` | My Readings + rebook + follow-up | **Supporting** | 6 |
 | `S14` | Second Opinion | Stretch | 7 |
 
@@ -115,7 +130,7 @@ Order { id, items, total, createdAt }
 RecapCard { topic, question, whoFor, bullets[], remedies[], paid }
 ```
 
-Map `topic` → store `intention`: Career→career, Love→love, Family→peace/love, Health→peace, Money→wealth.
+Map `topic` → store `intention`: Career→career, Love→love, Family / Health / Spiritual / **Not sure**→peace, Money→wealth.
 
 ---
 
@@ -138,16 +153,16 @@ flowchart TD
   Sheet -->|Continue| Brief
   Brief -->|Start / cap| Chat
   Chat -->|End| Recap
-  Recap -->|Shop this topic| Store
+  Recap -->|Shop for topic| Store
   Recap --> List
-  List -->|Shop this topic| Store
+  List -->|Shop for topic| Store
   List -->|Book again| Sheet
   Home -->|Recommended for You| PDP
   Home -->|Store tab / bag / card / Menu| Store
   Store --> PDP
 ```
 
-**Funnel:** Reading (who + topic) → recap → **Shop this topic** / For You. Purchase is optional. Do not force checkout to finish the hero.
+**Funnel:** Reading (who + topic) → recap → **Shop for {topic}** / For You. Purchase is optional. Do not force checkout to finish the hero.
 
 ---
 
@@ -191,8 +206,8 @@ Same `S6`: **Me / Partner / Both**; saved kundli (Diya); optional `S8` join.
 ## Phase 5 — Hero live + OUT + funnel join
 
 `S9`/`S10`: pin **whoFor** + charts + topic + question. Meter on. Scripted bubbles.  
-End → `S9c` recap (who + 5 bullets + remedies + Book again + **Shop this topic**). **Pause the demo here.**  
-Shop this topic → `ST1` with `intention`. For You = last reading topic.
+End → `S9c` recap (who + 5 bullets + remedies + Home + Shop for {topic} + Book again). **Pause the demo here.**  
+Shop for {topic} → `ST1` For You with `intention`. For You = last reading `storeIntention`.
 
 ---
 
@@ -237,9 +252,9 @@ After 1–6 only.
 | Chat or Call | `S6` |
 | Continue on `S6` | `S6b` (meter off) |
 | Start / briefing cap | `S9` (meter on) |
-| End session | `S9c` recap → save reading; For You topic = `file.topic` |
-| Shop this topic | `ST1` + `intention` |
-| Close recap | `S11` |
+| End session | `S9c` recap → save reading; For You intention = recap `storeIntention` |
+| Shop for {topic} / Shop remedies | `ST1` For You + intention |
+| Recap **Home** | `S1` (session already ended — do not pop back to chat) |
 | Book again | `S6` prefilled |
 
 ---

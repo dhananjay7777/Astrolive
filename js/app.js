@@ -241,7 +241,7 @@
     if (!sf) { resetTo(['consultant']); return; }
 
     const a = findAstrologer(sf.astrologerId);
-    const TOPIC_LABELS = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual' };
+    const TOPIC_LABELS = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual', unsure:'Not sure' };
 
     /* avatar */
     const avatarEl = document.getElementById('bfAvatar');
@@ -283,7 +283,7 @@
   /* =========================================================
      S9 — CHAT SCREEN render  (Phase 5)
   ========================================================= */
-  const TOPIC_LABELS_CHAT = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual' };
+  const TOPIC_LABELS_CHAT = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual', unsure:'Not sure' };
 
   function buildPinText(sf) {
     const who = sf.whoFor === 'both' && sf.partnerSnapshot
@@ -342,7 +342,7 @@
     const sf = session.file;
     if (!sf || !sf.recap) { resetTo(['home']); return; }
     const r = sf.recap;
-    const TOPIC_MAP = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual' };
+    const TOPIC_MAP = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual', unsure:'Open reading' };
 
     /* meta */
     const metaEl = document.getElementById('recapMeta');
@@ -351,7 +351,7 @@
       : sf.whoFor === 'partner' && sf.partnerSnapshot
         ? sf.partnerSnapshot.name : sf.selfSnapshot.name;
     if (metaEl) metaEl.innerHTML =
-      `<strong>${TOPIC_MAP[r.topic] || r.topic}</strong> reading with <strong>${sf.astrologerName}</strong><br>
+      `<strong>${TOPIC_MAP[r.topic] || r.topic}</strong> with <strong>${sf.astrologerName}</strong><br>
        <span style="font-size:12px;color:var(--text-mute);">For: ${whoLabel}${r.question ? ' · "' + r.question + '"' : ''}</span>`;
 
     /* bullets */
@@ -372,10 +372,10 @@
       badge.textContent = r.paid ? 'Saved · ₹49' : 'Free preview';
     }
 
-    const PLAIN_TOPIC = { career:'Career', love:'Love', family:'Family', health:'Health', money:'Money', spiritual:'Spiritual' };
+    const PLAIN_TOPIC = { career:'Career', love:'Love', family:'Family', health:'Health', money:'Money', spiritual:'Spiritual', unsure:'remedies' };
     const shopBtnText = document.getElementById('recapShopBtnText');
     const topicPlain = PLAIN_TOPIC[r.topic] || r.topic || 'this topic';
-    if (shopBtnText) shopBtnText.textContent = 'Shop for ' + topicPlain;
+    if (shopBtnText) shopBtnText.textContent = r.topic === 'unsure' ? 'Shop remedies' : ('Shop for ' + topicPlain);
   }
 
   /* =========================================================
@@ -482,7 +482,7 @@
   function renderInviteScreen() {
     const sf = session.file;
     if (!sf) { resetTo(['consultant']); return; }
-    const TOPIC_LABELS = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual' };
+    const TOPIC_LABELS = { career:'💼 Career', love:'❤️ Love', family:'🏠 Family', health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual', unsure:'Not sure' };
     const el = id => document.getElementById(id);
     if (el('invAstrologer')) el('invAstrologer').textContent = sf.astrologerName;
     if (el('invTopic'))      el('invTopic').textContent = TOPIC_LABELS[sf.topic] || sf.topic || '—';
@@ -659,8 +659,6 @@
   function selectIntention(id){
     state.selectedIntention = id;
     renderStore();
-    const grid = document.getElementById('storeGrid');
-    if(grid) grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function selectStoreTab(tab){
@@ -783,10 +781,48 @@
     if(tab) selectStoreTab(tab.dataset.tab);
   });
 
-  document.getElementById('intentionRow').addEventListener('click', (e) => {
-    const chip = e.target.closest('.intention-chip');
-    if(chip && chip.dataset.intention) selectIntention(chip.dataset.intention);
-  });
+  function enableDragScroll(row){
+    if(!row) return;
+    let suppressClick = false;
+
+    row.addEventListener('mousedown', (e) => {
+      if(e.button !== 0) return;
+      const startX = e.pageX;
+      const startScroll = row.scrollLeft;
+      let dragging = false;
+
+      function onMove(ev){
+        const dx = ev.pageX - startX;
+        if(!dragging && Math.abs(dx) > 8) dragging = true;
+        if(dragging){
+          ev.preventDefault();
+          row.classList.add('is-dragging');
+          row.scrollLeft = startScroll - dx;
+        }
+      }
+
+      function onUp(){
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        row.classList.remove('is-dragging');
+        if(dragging) suppressClick = true;
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
+    row.addEventListener('click', (e) => {
+      if(suppressClick){
+        suppressClick = false;
+        return;
+      }
+      const chip = e.target.closest('.intention-chip');
+      if(chip && chip.dataset.intention) selectIntention(chip.dataset.intention);
+    });
+  }
+
+  enableDragScroll(document.getElementById('intentionRow'));
 
   /* =========================================================
      PRODUCT DETAIL

@@ -6,7 +6,8 @@ This file is the **source of truth for rules**. The clickable demo should *behav
 
 **Product:** [Suggested-Directions.md](./Suggested-Directions.md)  
 **Screens:** [architecture.md](./architecture.md)  
-**Build:** [implementation.md](./implementation.md)
+**Build:** [implementation.md](./implementation.md)  
+**Flows:** [userflow-and-system-design.md](./userflow-and-system-design.md)
 
 ---
 
@@ -23,21 +24,14 @@ This file is the **source of truth for rules**. The clickable demo should *behav
 | **Recording + STT + LLM recap** | Scripted recap bullets keyed to `topic` + `note` — no real mic, no real API |
 | Cron for 3d / 1w / 1m reminders | Store `followUp` + `followUpAt`; show a chip. Do not send real notifications |
 
-**Storage key (suggested):** `astrolive_proto_v1`
+**Storage keys (as shipped):**
 
-```text
-{
-  currentUserId: "seeker-aarav",
-  kundlis: [ ... ],
-  astrologers: [ ... ],
-  session: SessionFile | null,
-  readings: [ SessionFile ],
-  role: "seeker" | "astrologer",
-  products: [ ... ],            // seed; company-given Store
-  cart: [{ productId, qty }],
-  orders: [ Order ]
-}
-```
+| Key | Contents |
+|-----|----------|
+| `astrolive_readings` | Done recaps + demo seeds if empty |
+| `astrolive_cart` | Cart lines `{ id, qty }` |
+
+Suggested unified blob `astrolive_proto_v1` was **not** used. Active `session.file` is in-memory only.
 
 All “API” names below are **logical**. In the prototype they are local functions, e.g. `createSessionFile(payload)`.
 
@@ -80,7 +74,8 @@ Already sketched in `index.html`. Keep in the prototype. No payment API.
 ```text
 Product
   id, name, intention, price, oldPrice, rating, ...
-  // intention ≈ Session File topic: career, love, wealth, peace, protection, planetary
+  // store intention chips (as shipped): career, love, wealth, peace
+  // product.intention may still be protection on Evil Eye; that chip is not in Shop by Intention
 
 CartLine { productId, qty }
 Order { id, items[], total, createdAt, status: placed | delivered }
@@ -92,9 +87,11 @@ Order { id, items[], total, createdAt, status: placed | delivered }
 |-------|-------------------|
 | Career | career |
 | Love | love |
-| Family | peace (or love) |
+| Family | peace |
 | Health | peace |
 | Money | wealth |
+| Spiritual | peace |
+| **Not sure** | peace |
 
 ### 2.3 SessionFile (hero — new)
 
@@ -107,7 +104,7 @@ SessionFile
   astrologerId: string
   channel: chat | call                 // from the button they tapped
 
-  topic: Career | Love | Family | Health | Money     // required
+  topic: Career | Love | Family | Health | Money | Spiritual | Unsure   // required; Unsure = “let the astrologer guide”
   note: string                         // optional, max ~140 chars
   whoFor: Me | Partner | Both          // default Me
 
@@ -201,7 +198,7 @@ Call this `assertSessionFileReady(file)` in the prototype before `S9`.
 
 ```text
 FAIL if astrologerId missing
-FAIL if topic missing
+FAIL if topic missing   // Unsure is a valid topic
 FAIL if selfSnapshot missing (no self kundli)
 FAIL if whoFor is Partner or Both AND partnerSnapshot is null
      AND invite.status is not sent and not joined
@@ -212,7 +209,7 @@ PASS otherwise
 **Defaults**
 
 - `whoFor = Me` → `partnerSnapshot = null`, `invite.status = none`
-- Topic **Love** or **Family** → UI may set `whoFor = Both` (user can change). Backend only stores what they confirm.
+- Topic **Unsure** is valid. Recap seed is chart-led; shop CTA is **Shop remedies** (peace).
 - `keyLine` on create = empty; on end = `topic` if still empty.
 
 **Health:** store the chip only. No medical claims, no diagnosis fields.
@@ -270,7 +267,7 @@ Prefix: all scoped to `currentUserId` unless noted.
 
 | Logic name | Input | Behaviour |
 |------------|--------|-----------|
-| `listReadings()` | Menu | `readings` for current seeker, `endedAt` desc |
+| `listReadings()` | Menu | `astrolive_readings`, newest first. If empty on first load, write `READING_SEEDS` |
 | `getReading(id)` | Detail | One done file |
 | `rebook(readingId)` | Book again | `startConsult` with **same** astrologer + copy topic, note, whoFor, snapshots. New session id. |
 | `starTakeaway(sessionId, text)` | Astrologer stars a line | Set `keyLine` (max ~140). Allowed in `live` or `done`. |
@@ -300,11 +297,11 @@ Second astrologer `getSessionFile` sees the **packet only**, not the first trans
 
 | Logic name | Behaviour |
 |------------|-----------|
-| `listProducts(tab, intention)` | For You / categories / best sellers |
-| `listRecommended(topic)` | Map topic → intention; if `topic` null, bestsellers |
-| `addToCart` / `updateQty` / `removeFromCart` | Mutate `cart` in `localStorage` |
+| `listProducts(tab, intention)` | For You / categories / best sellers. Intention chips: love, career, wealth, peace. Filter **stays on the current tab**. |
+| `listRecommended(topic)` | Map topic → intention; if `topic` null or Unsure, peace (or last reading) |
+| `addToCart` / `updateQty` / `removeFromCart` | Mutate `astrolive_cart` |
 | `placeOrder()` | Build `Order`, clear cart; no payment |
-| `shopThisTopic(readingId)` | `listRecommended(reading.topic)` then UI opens Store |
+| `shopThisTopic(readingId)` | Open Store **For You** with that reading’s `storeIntention` |
 
 Do not require an in-chat purchase to complete the hero demo.
 

@@ -13,7 +13,8 @@ const READINGS_KEY = 'astrolive_readings';
 
 const TOPIC_LABELS = {
   career:'💼 Career', love:'❤️ Love', family:'🏠 Family',
-  health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual'
+  health:'🌿 Health', money:'💰 Money', spiritual:'🪷 Spiritual',
+  unsure:'Not sure'
 };
 
 function formatReadingDate(iso){
