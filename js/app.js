@@ -369,22 +369,13 @@
     /* paid badge */
     const badge = document.getElementById('recapPaidBadge');
     if (badge) {
-      badge.textContent = r.paid ? '✨ Saved · ₹49' : '✨ Saved (free preview)';
+      badge.textContent = r.paid ? 'Saved · ₹49' : 'Free preview';
     }
 
-    /* Shop this topic button label */
+    const PLAIN_TOPIC = { career:'Career', love:'Love', family:'Family', health:'Health', money:'Money', spiritual:'Spiritual' };
     const shopBtnText = document.getElementById('recapShopBtnText');
-    const label = 'Shop this topic';
-    const topicLabel = (TOPIC_MAP[r.topic] || r.topic);
-    if (shopBtnText) shopBtnText.textContent = 'Shop for ' + topicLabel;
-    else {
-      const shopBtn = document.getElementById('recapShopBtn');
-      if (shopBtn) shopBtn.textContent = label + (topicLabel ? ' ' + topicLabel : '');
-    }
-
-    /* Book again label */
-    const rebookText = document.getElementById('recapRebookBtnText');
-    if (rebookText) rebookText.textContent = 'Book again';
+    const topicPlain = PLAIN_TOPIC[r.topic] || r.topic || 'this topic';
+    if (shopBtnText) shopBtnText.textContent = 'Shop for ' + topicPlain;
   }
 
   /* =========================================================

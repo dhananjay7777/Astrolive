@@ -170,8 +170,8 @@
             <div class="tool-card" onclick="showToast('Kundli\'s Match')">
               <img src="asset/banners/kundli-match-banner.png" alt="Kundli's Match" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#2a1a4a,#1a0a2e)';this.parentElement.style.height='86px';this.parentElement.innerHTML+='<div style=\'padding:14px;color:#fff;font-weight:700;font-size:13px;\'>💑 Kundli\'s Match</div>'">
             </div>
+            </div>
           </div>
-        </div>
 
         <!-- Astro Store (in-app insert — not a 6th tab) -->
         <div class="section" style="padding-bottom:0;">
@@ -718,9 +718,9 @@
           <div class="rs-header-info">
             <span class="rs-header-name" id="rsAstrologerName">Astrologer</span>
             <span class="rs-header-channel" id="rsChannelLabel">Chat</span>
-          </div>
+      </div>
           <div class="rs-header-avatar" id="rsAstrologerAvatar"></div>
-        </div>
+      </div>
 
         <!-- Who for? -->
         <div class="rs-section">
@@ -729,8 +729,8 @@
             <button class="rs-whofor-btn selected" data-who="me"    onclick="selectWhoFor('me')">Me</button>
             <button class="rs-whofor-btn"          data-who="partner" onclick="selectWhoFor('partner')">Partner</button>
             <button class="rs-whofor-btn"          data-who="both"  onclick="selectWhoFor('both')">Both ✨</button>
-          </div>
-        </div>
+      </div>
+      </div>
 
         <!-- Kundli card (self) -->
         <div class="rs-section">
@@ -744,8 +744,8 @@
               <div class="rs-kundli-dob">15 Mar 1992 · 06:30 AM · Jaipur, Rajasthan</div>
             </div>
             <span class="rs-kundli-badge">Me</span>
-          </div>
-        </div>
+      </div>
+    </div>
 
         <!-- Partner kundli card (shown for Partner / Both) -->
         <div class="rs-section" id="rsPartnerSection" style="display:none;">
@@ -782,8 +782,8 @@
               <button class="rs-add-cancel" onclick="hideAddKundliForm()">Cancel</button>
               <button class="rs-add-save"   onclick="saveNewKundli()">Save &amp; Use</button>
             </div>
-          </div>
-        </div>
+  </div>
+</div>
 
         <!-- Topic chips -->
         <div class="rs-section">
@@ -813,8 +813,8 @@
             </div>
             <div class="rs-toggle-track" id="rsToggleTrack">
               <div class="rs-toggle-thumb" id="rsToggleThumb"></div>
-            </div>
           </div>
+        </div>
         </div>
 
         <!-- Continue CTA -->
@@ -823,7 +823,7 @@
             Continue →
           </button>
           <div class="rs-cta-hint" id="rsCtaHint">Select a topic to continue</div>
-        </div>
+      </div>
 
       </div><!-- /readingView -->
 
@@ -853,25 +853,25 @@
             <div class="bf-card-row">
               <span class="bf-card-label">Name</span>
               <span class="bf-card-val" id="bfName">—</span>
-            </div>
+        </div>
             <div class="bf-card-row">
               <span class="bf-card-label">DOB</span>
               <span class="bf-card-val" id="bfDob">—</span>
-            </div>
+          </div>
             <div class="bf-card-row">
               <span class="bf-card-label">Topic</span>
               <span class="bf-card-val" id="bfTopic">—</span>
-            </div>
+        </div>
             <div class="bf-card-row">
               <span class="bf-card-label">Question</span>
               <span class="bf-card-val" id="bfNote">—</span>
-            </div>
+        </div>
           </div>
 
           <!-- Progress bar -->
           <div class="bf-progress-wrap">
             <div class="bf-progress-bar" id="bfProgressBar"></div>
-          </div>
+        </div>
           <div class="bf-progress-label" id="bfProgressLabel">Reviewing chart…</div>
 
           <!-- Start button (shown after auto-advance or skip) -->
@@ -981,17 +981,17 @@
             <span class="chat-header-status"><span class="chat-online-dot"></span> Meter on</span>
           </div>
           <span style="font-size:11px;color:rgba(255,255,255,0.6);padding-right:4px;">S10</span>
-        </div>
+            </div>
 
         <!-- Pinned card — same data -->
         <div class="chat-pin" id="astroPinWrap" style="background:#2a1460;">
           <div class="chat-pin-label" style="color:rgba(255,255,255,0.6);">📋 Session File</div>
           <div class="chat-pin-body" id="astroPinBody" style="color:#e8d8ff;">—</div>
-        </div>
+      </div>
 
         <div class="astro-view-note">
           <span>You are viewing the <strong>astrologer's perspective</strong>. The pinned card above is what the astrologer sees — both charts, topic, and question.</span>
-        </div>
+      </div>
 
         <!-- Mirror of chat messages -->
         <div class="chat-messages" id="astroMessages" style="background:#100828; flex:1;"></div>
@@ -999,8 +999,8 @@
         <div class="chat-footer" style="background:#100828; border-top-color:#2a1460; box-shadow:none;">
           <div class="chat-end-wrap" style="background:#100828; padding-top:10px;">
             <button class="chat-end-btn" onclick="endSession()">End Session</button>
-          </div>
         </div>
+      </div>
 
       </div><!-- /astrologerView -->
 
@@ -1009,7 +1009,7 @@
 
         <div class="recap-header">
           <div class="recap-header-title">Your Reading Recap</div>
-          <div class="recap-paid-badge" id="recapPaidBadge">✨ Saved</div>
+          <div class="recap-paid-badge" id="recapPaidBadge">Saved</div>
         </div>
 
         <div class="recap-body">
@@ -1028,12 +1028,10 @@
           <!-- Actions -->
           <div class="recap-actions">
             <button class="recap-shop-btn" id="recapShopBtn" onclick="shopThisTopic()">
-              <span class="recap-btn-icon" aria-hidden="true">🛍️</span>
               <span id="recapShopBtnText">Shop this topic</span>
             </button>
             <button class="recap-rebook-btn" id="recapRebookBtn" onclick="rebookSession()">
-              <span class="recap-btn-icon" aria-hidden="true">↻</span>
-              <span id="recapRebookBtnText">Book again</span>
+              Book again
             </button>
           </div>
 
@@ -1068,7 +1066,7 @@
         </span>
         Call
       </button>
-    </div>
+            </div>
 
     <!-- Bottom nav -->
     <div class="bottom-nav" id="bottomNav">
@@ -1077,7 +1075,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
         </span>
         <span>Home</span>
-      </div>
+          </div>
       <div class="nav-item" data-nav="live" onclick="onNavClick('live')">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
