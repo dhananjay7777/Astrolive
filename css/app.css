@@ -782,8 +782,12 @@
   .payment-label{ font-size:13px; font-weight:700; color:var(--text); }
   .payment-sub{ font-size:10.5px; color:var(--text-mute); margin-top:1px; }
 
+  .checkout-action-bar{
+    position:sticky; bottom:0; z-index:20; background:#fff; border-top:1px solid #eee;
+    padding:12px 16px; margin-top:8px;
+  }
   .place-order-btn{
-    margin:16px; width:calc(100% - 32px); background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
+    margin:0; width:100%; background:linear-gradient(90deg,#8a3fd6,#6a1fd0); color:#fff; border:none;
     padding:15px 0; border-radius:14px; font-weight:700; font-size:15px;
   }
 
